@@ -23,8 +23,9 @@ exports.signup = (req, res, next) => {
           .then(hash => {
             let admin = 0;
             let defaultPicture = `${req.protocol}://${req.get('host')}/images/user/user-3331257_960_720.png`;
-            let sql = `INSERT INTO user (username, profile_picture, email, password, creation_date, admin) VALUES ("${value.username}", "${defaultPicture}", "${value.username}", "${value.email}", "${hash}", "CURRENT_TIMESTAMP()", "${admin}");`
-            db.query(sql, (error, result) => {
+            let values = [value.username, defaultPicture, value.email, hash, CURRENT_TIMESTAMP(), admin];
+            let sql = "CALL signIn(?, ?, ?, ?, ?, ?);"
+            db.query(sql, values, (error, result) => {
               if (error) {
                 return res.status(400).json("error")
               }
@@ -40,9 +41,9 @@ exports.signup = (req, res, next) => {
 
 exports.login = (req, res, next) => {
   let isAdmin = '';
-  let email = req.body.email;
-  let sql = `SELECT email, password, admin FROM user WHERE email="${email}";`
-  db.query(sql, (error, result) => {
+  let email = [req.body.email];
+  let sql = "CALL login(?);"
+  db.query(sql, email, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
     } if (result.length === 0) {
@@ -53,14 +54,14 @@ exports.login = (req, res, next) => {
         if (!valid) {
           return res.status(401).json("Incorrect password !");
         } if (result[0].admin === 0) {
-          isAdmin = 'user'
+          role = 'user'
         } else {
-          isAdmin = 'admin'
+          role = 'admin'
         }
         res.status(200).json({
           iduser: result[0].iduser,
           username: result[0].username,
-          role: isAdmin,
+          role: role,
           token: jwt.sign(
             {
               iduser: result.iduser,
@@ -76,8 +77,9 @@ exports.login = (req, res, next) => {
 };
 
 exports.getUser = (req, res, next) => {
-  let sql = `SELECT * FROM user WHERE iduser = ${req.params.id}`
-  db.query(sql, (error, result) => {
+  let value = [req.params.id]
+  let sql = "CALL getUser(?);"
+  db.query(sql, value, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }
@@ -86,8 +88,9 @@ exports.getUser = (req, res, next) => {
 }
 
 exports.searchUsers = (req, res, next) => {
-  let sql = `SELECT iduser, username, firstname, lastname FROM user WHERE ? LIKE '%${req.body}%';`
-  db.query(sql, (error, result) => {
+  let value = [req.body]
+  let sql = "SELECT username, firstname, lastname FROM user WHERE ? LIKE '% ? %';"
+  db.query(sql, value, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }
@@ -96,16 +99,12 @@ exports.searchUsers = (req, res, next) => {
 }
 
 exports.updateUser = (req, res, next) => {
-  const email = req.body.email
-  const username = req.body.username
-  const firstname = req.body.firstname
-  const lastname = req.body.lastname
-  const description = req.body.description
-  const position = req.body.position
-  const birthday = req.body.birthday
-  const profile_picture = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
-  let sql = `UPDATE user SET email='${email}', username='${username}', profile_picture='${profile_picture}', firstname='${firstname}', lastname='${lastname}', description='${description}', position='${position}', birthday='${birthday}', WHERE iduser = ${req.params.id}`
-  db.query(sql, (error, result) => {
+  const { email, username, firstname, lastname, description, position, birthday } = req.body;
+  const profile_picture = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`;
+  const id = req.params.id
+  let values = [email, username, profile_picture, firstname, lastname, description, position, birthday, id]
+  let sql = "CALL updateUser(?, ?, ?, ?, ?, ?, ?, ?, ?);"
+  db.query(sql, values, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }
@@ -114,8 +113,10 @@ exports.updateUser = (req, res, next) => {
 }
 
 exports.deleteUser = (req, res) => {
-  let sql = `DELETE FROM user WHERE iduser = ${req.params.id};`
-  db.query(sql, (error, result) => {
+  const id = req.params.id
+  let value = [id]
+  let sql = "CALL deleteUser(?);"
+  db.query(sql, value, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }

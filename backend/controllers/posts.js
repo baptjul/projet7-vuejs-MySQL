@@ -10,8 +10,9 @@ exports.createPost = (req, res, next) => {
     } else {
         let commentPicture = 'NULL'
     }
-    let sql = `INSERT INTO posts (text_content, time_post, post_picture, user_iduser, user_username) VALUES ("${data.post}", "NOW()", "${commentPicture}", "${}", "${}");` // ??????????
-    db.query(sql, (error, result) => {
+    let values = [data.post, commentPicture, NOW(), data.iduser]
+    let sql = "CALL createPost(?, ?, ?, ?);"
+    db.query(sql, values, (error, result) => {
         if (error) {
             return res.status(400).json("error")
         }
@@ -20,29 +21,33 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.getPost = (req, res, next) => {
-    let sql = `SELECT * FROM posts ORDER BY time_post ASC;`
+    let sql = `CALL getPosts`
     db.query(sql, (error, result) => {
         if (error) {
             return res.status(400).json("error")
         }
         res.status(200).json("Posts recovered");
     })
+    next()
 };
 
-exports.getPostUser = (req, res, next) => {
-    let datetime = fullDate();
-    let sql = `SELECT * FROM posts WHERe (userid = ${req.params.id}) AND (TIMESTAMPDIFF(NOW(), time_post) AS time_since_post ) ORDER BY time_post ASC LIMIT 50;`
-    db.query(sql, (error, result) => {
+exports.getUserPost = (req, res, next) => {
+    let id = [req.params.id]
+    let sql = `CALL getUserPosts(?)`
+    db.query(sql, id, (error, result) => {
         if (error) {
             return res.status(400).json("error")
         }
-        res.status(200).json("User Posts recovered");
+        res.status(200).json("Posts recovered");
     })
+    next()
 };
 
 exports.deletePost = (req, res) => {
-    let sql = `DELETE FROM posts WHERE idposts = ${req.body._id};` // ??????????
-    db.query(sql, (error, result) => {
+    const id = req.body._id
+    let value = [id]
+    let sql = "CALL deletePost(?);"
+    db.query(sql, value, (error, result) => {
         if (error) {
             return res.status(401).json("database not connected !");
         }
@@ -53,10 +58,22 @@ exports.deletePost = (req, res) => {
     });
 }
 
+exports.getComments = (req, res, next) => {
+    let id = [req.body.idposts]
+    let sql = "CALL getComments(?)"
+    db.query(sql, id, (error, result) => {
+        if (error) {
+            return res.status(400).json("error")
+        }
+        res.status(200).json("Comment created");
+    })
+};
+
 exports.createComment = (req, res, next) => {
     let data = req.body
-    let sql = `INSERT INTO comments (content, time_comment, posts_idposts, user_iduser, user_username) VALUES ("${data.comment}", "NOW()", "${}", "${}", "${}");` // ???????????
-    db.query(sql, (error, result) => {
+    let values = [data.comment, NOW(), data.idposts, data.iduser]
+    let sql = "CALL createComment(?, ?, ?, ?);"
+    db.query(sql, values, (error, result) => {
         if (error) {
             return res.status(400).json("error")
         }
@@ -65,8 +82,9 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res) => {
-    let sql = `DELETE FROM comments WHERE idcomments = ${req.params.id};`
-    db.query(sql, (error, result) => {
+    let value = req.params.id
+    let sql = "CALL deleteComment(?);"
+    db.query(sql, value, (error, result) => {
         if (error) {
             return res.status(401).json("database not connected !");
         }
@@ -75,4 +93,102 @@ exports.deleteComment = (req, res) => {
             res.status(200).json("Comment deleted");
         })
     });
+}
+
+exports.likeAndDislikePosts = (req, res, next) => {
+    const postid = req.body.idposts;
+    const userid = req.body.iduser;
+    const data = [postid, userid]
+    const dataRemoved = [0, postid, userid]
+    const dataAdded = [1, postid, userid]
+    switch (req.body.like) {
+        case 0:
+            let sql = "CALL getlike(?, ?);"
+            db.query(sql, data, (error, result) => {
+                if (error) {
+                    return res.status(401).json("database not connected !");
+                }
+                if (result.like === 1 && result.dislike === 0) {
+                    let connection = "UPDATE likes SET likes = ? WHERE likes.posts_idposts = ? AND likes.user_iduser = ?;"
+                    db.query(connection, dataRemoved, (error, result) => {
+                        res.status(200).json("like remove");
+                    })
+                } else if (result.dislike === 1 && result.like === 0) {
+                    let connection = "UPDATE likes SET dislikes = ? WHERE likes.posts_idposts = ? AND likes.user_iduser = ?;"
+                    db.query(connection, dataRemoved, (error, result) => {
+                        res.status(200).json("like remove");
+                    })
+                }
+            })
+            break;
+        case 1:
+            let connection = "UPDATE likes SET likes = ? WHERE likes.posts_idposts = ? AND likes.user_iduser = ?;"
+            db.query(connection, dataAdded, (error, result) => {
+                if (error) {
+                    return res.status(401).json("database not connected !");
+                }
+                res.status(200).json("posts liked");
+            });
+            break;
+        case -1:
+            let connection = "UPDATE likes SET dislikes = ? WHERE likes.posts_idposts = ? AND likes.user_iduser = ?;"
+            db.query(connection, dataAdded, (error, result) => {
+                if (error) {
+                    return res.status(401).json("database not connected !");
+                }
+                res.status(200).json("posts disliked");
+            });
+            break;
+        default:
+            throw { error: "failed operation" };
+    }
+}
+
+exports.likeAndDislikeComments = (req, res, next) => {
+    const commentid = req.body.idcomments;
+    const userid = req.body.iduser;
+    const data = [commentid, userid]
+    const dataRemoved = [0, commentid, userid]
+    const dataAdded = [1, commentid, userid]
+    switch (req.body.like) {
+        case 0:
+            let sql = "SELECT * FROM likes WHERE likes.comments_idcomments = ? AND likes.user_iduser = ? ;"
+            db.query(sql, data, (error, result) => {
+                if (error) {
+                    return res.status(401).json("database not connected !");
+                }
+                if (result.like === 1 && result.dislike === 0) {
+                    let connection = "UPDATE likes SET likes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
+                    db.query(connection, dataRemoved, (error, result) => {
+                        res.status(200).json("like remove");
+                    })
+                } else if (result.dislike === 1 && result.like === 0) {
+                    let connection = "UPDATE likes SET dislikes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
+                    db.query(connection, dataRemoved, (error, result) => {
+                        res.status(200).json("like remove");
+                    })
+                }
+            })
+            break;
+        case 1:
+            let connection = "UPDATE likes SET likes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
+            db.query(connection, dataAdded, (error, result) => {
+                if (error) {
+                    return res.status(401).json("database not connected !");
+                }
+                res.status(200).json("posts liked");
+            });
+            break;
+        case -1:
+            let connection = "UPDATE likes SET dislikes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
+            db.query(connection, dataAdded, (error, result) => {
+                if (error) {
+                    return res.status(401).json("database not connected !");
+                }
+                res.status(200).json("posts disliked");
+            });
+            break;
+        default:
+            throw { error: "failed operation" };
+    }
 }

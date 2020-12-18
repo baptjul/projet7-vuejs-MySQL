@@ -17,7 +17,7 @@ router.post('/login', connexionLimiter, userCtrl.login);
 router.get('/user/:id', auth, userCtrl.getUser);
 router.get('/search/:id', auth, userCtrl.searchUsers);
 router.put('/user/:id', auth, userCtrl.updateUser);
-router.delete('/delete/:id', admin, userCtrl.deleteUser);
+router.delete('/delete/:id', auth, userCtrl.deleteUser);
 
 
 module.exports = router
