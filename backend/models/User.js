@@ -28,7 +28,6 @@ const UserSchema = joi.object({
     description: joi.string()
         .alphanum(),
     birthday: joi.date()
-        .integer()
         .min('1-1-1900')
         .max('12-31-2020'),
     creation_date: joi.date()

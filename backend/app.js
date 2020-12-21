@@ -3,17 +3,14 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
 const helmet = require("helmet");
-
 require("dotenv").config();
 
-// import du router
 const postsRoutes = require('./routes/posts');
-// import des login
+const comRoutes = require('./routes/comment');
 const userRoutes = require('./routes/user');
 
 const app = express();
 
-// gestion de l'acces,
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -26,7 +23,7 @@ app.use(bodyParser.json());
 // Sécurité contre les injections
 app.use(helmet());
 
-// gestion de la session utilisateu
+// gestion de la session utilisateur
 app.use(session({
   secret: process.env.SessionKey,
   name: 'sessionId',
@@ -38,14 +35,12 @@ app.use(session({
     maxAge: 86400000,
     sameSite: 'strict'
   }
-}))
+}));
 
-// url des images définit
-app.use('/images', express.static(path.join(__dirname, 'images')))
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// definition de l'url de l'api et des routes
-app.use('/api/posts', postsRoutes)
-// pour les login et mdp
-app.use('/api/auth', userRoutes)
+app.use('/api/posts', postsRoutes);
+app.use('/api/comments', comRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
