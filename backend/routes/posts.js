@@ -10,8 +10,8 @@ const { PostSchema } = require('../models/Posts');
 const postsCtrl = require('../controllers/posts')
 
 router.get('/', auth, postsCtrl.getPost);
-router.get('/:id', postsCtrl.getUserPost);
-router.post('/', multer, joiValidate(PostSchema), postsCtrl.createPost);
+router.get('/:id', auth, postsCtrl.getUserPost);
+router.post('/', auth, multer, joiValidate(PostSchema), postsCtrl.createPost);
 router.post('/:id/likePost', postsCtrl.likeAndDislikePosts);
 router.delete('/:id', auth, postsCtrl.deletePost);
 
