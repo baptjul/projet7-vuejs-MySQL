@@ -1,23 +1,24 @@
 var mysql = require('mysql');
 
 const dbconfig = mysql.createConnection({
-    host: 'localhost', // process.env.Db_host,
-    user: 'Groupomania_user', //process.env.Db_user,
-    password: 'ZUTwc5aMJhVmeMCe93hjsSH8X', //process.env.Db_password,
-    database: 'groupomania' //process.env.DataBase
+    host: process.env.DBHOST,
+    user: process.env.DBUSER,
+    password: process.env.BDPASSWORD,
+    database: process.env.DATABASE
 });
 
-dbconfig.connect((err) => {
+dbconfig.connect((err, test) => {
     if (!err) {
         console.log("Connected to data base");
+    } else {
+        console.log("Connection failed");
     }
-    console.log("Connection failed");
 });
 
 module.exports = dbconfig;
 
 /*
-Db_host = localhost
-Db_user = Groupo_user
-Db_password = ZUTwc5aMJhVmeMCe93hjsSH8X
-DataBase = groupomania*/
+Db_host = 'localhost'
+Db_user = 'Groupomania_user'
+Db_password = 'ZUTwc5aMJhVmeMCe93hjsSH8X'
+DataBase = 'groupomania'*/

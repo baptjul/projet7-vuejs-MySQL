@@ -2,10 +2,10 @@ const joi = require('joi');
 
 const CommentSchema = joi.object({
     content: joi.string()
-        .alphanum(),
-    time_comment: joi.date()
-        .timestamp()
-        .greater('now'),
+        .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/),
+    time: joi.string(),
+    idposts: joi.number(),
+    iduser: joi.number()
 })
 
 module.exports = { CommentSchema };

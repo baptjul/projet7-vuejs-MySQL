@@ -1,14 +1,11 @@
 const joi = require('joi');
 
 const PostSchema = joi.object({
-  text_content: joi.string()
+  post: joi.string()
+    .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/),
+  postPicture: joi.string()
     .alphanum(),
-  image_content: joi.string()
-    .alphanum(),
-  time_post: joi.date()
-    .timestamp()
-    .greater('now'),
-
+  iduser: joi.number()
 })
 
 module.exports = { PostSchema };

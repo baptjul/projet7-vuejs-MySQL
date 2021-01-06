@@ -1,48 +1,46 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const joi = require('joi');
 const db = require('../dbconfig');
 
-const passwordScheme = require('../models/Passwords');
-const { Signup } = require('../models/Signup');
-const { User } = require('../models/User');
-
-require('dotenv').config();
+const Token = (user, username, role) => {
+  token = jwt.sign({
+    iduser: user,
+    username: username,
+    role: role
+  },
+    process.env.TOKEN,
+    { expiresIn: '48h' })
+  return { user, token }
+}
 
 exports.signup = (req, res, next) => {
-  let schema = Signup
   let data = req.body
-  if (!passwordScheme.validate(data.password) || !schema.password.validate(data.password)) {
+  if (!passwordScheme.validate(data.password)) {
     throw { error: "invalid password" }
   } else {
-    joi.validate(data, schema, (err, value) => {
-      if (err) {
-        res.send('an error occured')
-      } else {
-        bcrypt.hash(value.password, 10)
-          .then(hash => {
-            let admin = 0;
-            let defaultPicture = `${req.protocol}://${req.get('host')}/images/user/user-3331257_960_720.png`;
-            let values = [value.username, defaultPicture, value.email, hash, CURRENT_TIMESTAMP(), admin];
-            let sql = "CALL signIn(?, ?, ?, ?, ?, ?);"
-            db.query(sql, values, (error, result) => {
-              if (error) {
-                return res.status(400).json("error")
-              }
-              res.status(200).json("User created");
-            })
-          })
-          .catch(error => res.status(500).json({ error }))
-      }
-    });
+    bcrypt.hash(data.password, 10)
+      .then(hash => {
+        let admin = 0;
+        let defaultPicture = `${req.protocol}://${req.get('host')}/images/user/user-3331257_960_720.png`;
+        let values = [data.username, defaultPicture, data.email, hash, admin];
+        let sql = "CALL signIn(?, ?, ?, ?, CURRENT_TIMESTAMP(), ?);"
+        db.query(sql, values, (error, result) => {
+          if (error) {
+            return res.status(400).json("error")
+          }
+          console.log(result)
+          return res.status(200).json(Token(result[0].iduser, result[0].username, role), "User created");
+        })
+      })
+      .catch(error => res.status(500).json({ error }))
   }
 }
 
 
 exports.login = (req, res, next) => {
-  let isAdmin = '';
+  let role = '';
   let email = [req.body.email];
-  let sql = "CALL login(?);"
+  let sql = "SELECT email, password, admin FROM user WHERE email = ?;"
   db.query(sql, email, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
@@ -58,19 +56,9 @@ exports.login = (req, res, next) => {
         } else {
           role = 'admin'
         }
-        res.status(200).json({
-          iduser: result[0].iduser,
-          username: result[0].username,
-          role: role,
-          token: jwt.sign(
-            {
-              iduser: result.iduser,
-              role: isAdmin
-            },
-            process.env.TOKEN,
-            { expiresIn: '48h' }
-          )
-        });
+        return res.status(200).json(
+          Token(result[0].iduser, result[0].username, role), "user logged"
+        );
       })
       .catch(error => res.status(500).json({ error }));
   })
@@ -78,12 +66,12 @@ exports.login = (req, res, next) => {
 
 exports.getUser = (req, res, next) => {
   let value = [req.params.id]
-  let sql = "CALL getUser(?);"
+  let sql = "SELECT * FROM user WHERE iduser = ?;"
   db.query(sql, value, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }
-    res.status(200).json("User Selected");
+    return res.status(200).json(result);
   });
 }
 
@@ -94,7 +82,7 @@ exports.searchUsers = (req, res, next) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }
-    res.status(200).json("User found");
+    return res.status(200).json(result);
   });
 }
 
@@ -108,21 +96,21 @@ exports.updateUser = (req, res, next) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }
-    res.status(200).json("User deleted");
+    return res.status(200).json("User deleted");
   });
 }
 
 exports.deleteUser = (req, res) => {
   const id = req.params.id
   let value = [id]
-  let sql = "CALL deleteUser(?);"
+  let sql = "DELETE FROM user WHERE iduser = ?;"
   db.query(sql, value, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
     }
     const filename = result.imageUrl.split('/images/user/')[1];
     fs.unlink(`images/${filename}`, () => {
-      res.status(200).json("User deleted");
+      return res.status(200).json("User deleted");
     })
   });
 }

@@ -25,7 +25,7 @@ app.use(helmet());
 
 // gestion de la session utilisateur
 app.use(session({
-  secret: process.env.SessionKey,
+  secret: process.env.SESSIONKEY,
   name: 'sessionId',
   resave: false,
   saveUninitialized: false,

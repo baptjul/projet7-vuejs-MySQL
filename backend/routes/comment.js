@@ -4,11 +4,14 @@ const router = express.Router();
 
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
+const joiValidate = require('../middleware/joiValidate');
+
+const { CommentSchema } = require('../models/Comments');
 
 const comCtrl = require('../controllers/comments')
 
-router.get('/', auth, comCtrl.getComments);
-router.post('/', auth, multer, comCtrl.createComment);
+router.get('/', comCtrl.getComments);
+router.post('/', auth, multer, joiValidate(CommentSchema), comCtrl.createComment);
 router.post('/:id/likeCom', auth, comCtrl.likeAndDislikeComments)
 router.delete('/:id', auth, comCtrl.deleteComment);
 

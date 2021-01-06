@@ -1,16 +1,18 @@
-// création d'un routeur
 const express = require('express');
 const router = express.Router();
 
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
+const joiValidate = require('../middleware/joiValidate');
+
+const { PostSchema } = require('../models/Posts');
 
 const postsCtrl = require('../controllers/posts')
 
-router.get('/', postsCtrl.getPost);
-router.get('/:id', auth, postsCtrl.getUserPost);
-router.post('/', auth, multer, postsCtrl.createPost);
-router.post('/:id/likePost', auth, postsCtrl.likeAndDislikePosts);
+router.get('/', auth, postsCtrl.getPost);
+router.get('/:id', postsCtrl.getUserPost);
+router.post('/', multer, joiValidate(PostSchema), postsCtrl.createPost);
+router.post('/:id/likePost', postsCtrl.likeAndDislikePosts);
 router.delete('/:id', auth, postsCtrl.deletePost);
 
 module.exports = router;

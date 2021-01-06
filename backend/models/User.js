@@ -33,6 +33,7 @@ const UserSchema = joi.object({
     creation_date: joi.date()
         .min('12-12-2020'),
     admin: joi.number()
-})
+        .max(1)
+}).unknown();
 
 module.exports = { UserSchema }
