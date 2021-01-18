@@ -96,7 +96,7 @@ exports.updateUser = (req, res, next) => {
   if (req.file) {
     profile_picture = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
   } else {
-    profile_picture = `${req.protocol}://${req.get('host')}/images/user/user-3331257_960_720.png`
+    profile_picture = `${req.protocol}://${req.get('host')}/images/user/icon.png`
   }
   let values = [email, username, profile_picture, firstname, lastname, description, position, birthday, id]
   let sql = "CALL updateUser(?, ?, ?, ?, ?, ?, ?, ?, ?);"
@@ -110,14 +110,18 @@ exports.updateUser = (req, res, next) => {
 
 exports.deleteUser = (req, res) => {
   const id = req.params.id
+  const image = req.imag_url
   let value = [id]
   let sql = "DELETE FROM user WHERE iduser = ?;"
   db.query(sql, value, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
+    } if (image !== null) {
+      const filename = result.imageUrl.split('/images/posts/')[1];
+      fs.unlink(`images/${filename}`, () => {
+        return res.status(200).json(result);
+      })
     }
-    /*const filename = result.imageUrl.split('/images/user/')[1];
-    fs.unlink(`images/${filename}`, () => {*/
     return res.status(200).json("User deleted");
   });
 }

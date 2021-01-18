@@ -11,6 +11,7 @@ const postsCtrl = require('../controllers/posts')
 
 router.get('/', auth, postsCtrl.getPost);
 router.get('/:id', auth, postsCtrl.getUserPost);
+router.get('/:id/likePost', auth, postsCtrl.likeOnPost)
 router.post('/', auth, multer, joiValidate(PostSchema), postsCtrl.createPost);
 router.post('/:id/likePost', postsCtrl.likeAndDislikePosts);
 router.delete('/:id', auth, postsCtrl.deletePost);

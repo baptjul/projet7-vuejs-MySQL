@@ -42,18 +42,34 @@ exports.getUserPost = (req, res, next) => {
 
 exports.deletePost = (req, res) => {
     const id = req.body.idposts
+    const image = req.imag_url
     let value = [id]
     let sql = "CALL deletePost(?);"
     db.query(sql, value, (error, result) => {
         if (error) {
             return res.status(401).json(error, "database not connected !");
+        } if (image !== null) {
+            const filename = result.imageUrl.split('/images/posts/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                return res.status(200).json(result);
+            })
         }
-        /*const filename = result.imageUrl.split('/images/posts/')[1];
-        fs.unlink(`images/${filename}`, () => {*/
         return res.status(200).json(result);
-
     });
 }
+
+exports.likeOnPost = (req, res, next) => {
+    const iduser = req.body.iduser
+    const idpost = req.params.id
+    let value = [idpost, iduser]
+    let sql = `SELECT * FROM likes WHERE likes.post_idposts = ? AND likes.user_iduser = ?`
+    db.query(sql, value, (error, result) => {
+        if (error) {
+            return res.status(400).json(error)
+        }
+        return res.status(200).json(result);
+    })
+};
 
 exports.likeAndDislikePosts = (req, res, next) => {
     const postid = req.body.idposts
