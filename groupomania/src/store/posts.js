@@ -7,15 +7,27 @@ export default {
   state: {
     error: '',
     posts: [],
-    //listLength = 5,
+    userPosts: [],
+    likes: [],
   },
   getters: {
     Posts: (state) => state.posts,
+    UserPosts: (state) => state.userPosts,
+    Likes: (state) => state.likes,
     ErrorMessage: (state) => state.error,
   },
   mutations: {
     ADD_POST(state, posts) {
       state.posts = posts
+    },
+    ADD_USERPOST(state, posts) {
+      state.userPosts = posts
+    },
+    ADD_LIKES(state, likes) {
+      state.likes = likes
+    },
+    LIKE(state, newLikes) {
+      state.likes.push(newLikes)
     },
     ERROR_MESSAGE(state, message) {
       state.error = message
@@ -24,23 +36,27 @@ export default {
       state.listLength += 5
     },*/
     REMOVE_POST(state, postId) {
-      state.posts = state.posts.filter(post => post.id !== postId)
+      let oldPostIndex = '';
+      state.posts.forEach((item, index) => {
+        if (item.id === postId) {
+          oldPostIndex = index;
+        }
+      });
+      state.posts.splice(oldPostIndex, 1);
     },
     CREATE_POST(state, newPost) {
-      state.posts.unshift(newPost)
-      state.posts = [...state.posts]
+      state.posts.push(newPost)
     },
   },
   actions: {
     getAllPosts({ commit }) {
       return axios.get('/posts/', { headers: headerAuth() })
         .then(response => {
-          console.log(response.data[0])
           commit('ADD_POST', response.data[0])
           return Promise.resolve(response.data);
         })
         .catch((error) => {
-          const message = error.response.data;
+          const message = error;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         })
@@ -51,11 +67,23 @@ export default {
           commit('REMOVE_POST', idpost);
           return Promise.resolve(response.data);
         })
-        .catch((err) => {
-          const message = err.response.data;
+        .catch((error) => {
+          const message = error;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         });
+    },
+    getUserPost({ commit }, iduser) {
+      return axios.get(`/posts/${iduser}`, { headers: headerAuth() })
+        .then(response => {
+          commit('ADD_USERPOST', response.data[0])
+          return Promise.resolve(response.data);
+        })
+        .catch((error) => {
+          const message = error;
+          commit('ERROR_MESSAGE', message)
+          return Promise.reject(message);
+        })
     },
     addPost({ commit }, data) {
       return axios.post('/posts/', data, { headers: headerAuth() })
@@ -63,19 +91,30 @@ export default {
           commit('CREATE_POST', res.data);
           return Promise.resolve(res.data);
         })
-        .catch((err) => {
-          const message = err.response.data;
+        .catch((error) => {
+          const message = error;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         });
     },
-    likeDislikePost({ commit }, idpost) {
-      return axios.post(`/posts/${idpost}/likePost`, {}, { headers: headerAuth() })
+    getLikes({ commit }, iduser) {
+      return axios.get(`/posts/${iduser}/likePost`, { headers: headerAuth() })
+        .then((res) => {
+          commit('ADD_LIKES', res.data);
+        })
+        .catch((error) => {
+          const message = error;
+          commit('ERROR_MESSAGE', message)
+          return Promise.reject(message);
+        });
+    },
+    likeDislikePost({ commit }, idpost, data) {
+      return axios.post(`/posts/${idpost}/likePost`, data, { headers: headerAuth() })
         .then((res) => {
           commit('LIKE', res.data);
         })
-        .catch((err) => {
-          const message = err.response.data;
+        .catch((error) => {
+          const message = error;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         });

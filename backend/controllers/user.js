@@ -29,7 +29,6 @@ exports.signup = (req, res, next) => {
           if (error) {
             return res.status(400).json(error)
           }
-          console.log(data.username)
           return res.status(200).json(Token(result.insertId, data.username, 'user'));
         })
       })
@@ -117,7 +116,7 @@ exports.deleteUser = (req, res) => {
     if (error) {
       return res.status(401).json("database not connected !");
     } if (image !== null) {
-      const filename = result.imageUrl.split('/images/posts/')[1];
+      const filename = result.imag_url.split('/images/posts/')[1];
       fs.unlink(`images/${filename}`, () => {
         return res.status(200).json(result);
       })

@@ -3,7 +3,7 @@ const fs = require('fs');
 const db = require('../dbconfig');
 
 exports.getComments = (req, res, next) => {
-    let id = [req.body.idposts]
+    let id = [req.params.id]
     let sql = "CALL getComments(?)"
     db.query(sql, id, (error, result) => {
         if (error) {

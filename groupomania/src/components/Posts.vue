@@ -9,12 +9,12 @@
           width="45"
           class="mr-3 rounded-circle img-thumbnail shadow-sm"
         />
-        <router-link class="" to="/profile"
+        <router-link to="`/profile`"
           ><h3 class="profil_link">{{ post.username }}</h3></router-link
         >
-        <div class="ml-3 blockquote-footer">il y a 18h</div>
+        <div class="ml-3 blockquote-footer">{{ getTodayDate }}</div>
         <!-- delete button -->
-        <div class="dropdown delete" v-if="canDel(post.user_iduser)">
+        <div class="dropdown delete" v-if="canDelete(post.user_iduser)">
           <button
             role="button"
             type="button"
@@ -24,13 +24,18 @@
             <i class="fas fa-ellipsis-v white"></i>
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="#">supprimer</a>
+            <a class="dropdown-item" v-on:click.prevent="delPost()"
+              >supprimer</a
+            >
           </div>
         </div>
       </div>
     </div>
     <div class="card-body">
-      <p>
+      <div class="picturePost">
+        {{ post.image_content }}
+      </div>
+      <p class="content">
         {{ post.text_content }}
       </p>
       <div class="d-flex vues">
@@ -51,7 +56,7 @@
     <hr />
     <!-- Commentaire -->
     <div class="card">
-      <div class="card-body secondary">
+      <div class="card-header secondary">
         <label for="comment" class="font-weight-bold comment-title"
           ><p class="text-light">Un commentaire ?</p></label
         >
@@ -62,20 +67,32 @@
           rows="1"
           placeholder="Poster un commentaire"
           required
+          v-model="content"
         ></textarea>
-        <button type="submit" class="btn btn--light float-right mt-2">
+        <button
+          type="submit"
+          class="btn btn--light float-right mt-2"
+          v-on:click.prevent="createCom()"
+        >
           répondre
         </button>
       </div>
       <hr />
-      <Comment />
+      <div class="comArea">
+        <Comment
+          v-for="comment in Comments"
+          :key="comment.idcomments"
+          :comment="comment"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Comment from "@/components/Comment.vue";
-import { mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import tokenInfo from "@/services/tokenInfo";
 
 export default {
   name: "Posts",
@@ -83,21 +100,95 @@ export default {
     Comment,
   },
   props: ["post"],
+  data() {
+    return {
+      show: false,
+      content: "",
+    };
+  },
+  computed: {
+    ...mapGetters({
+      Comments: "Comments/comment",
+      iduser: "Auth/iduser",
+    }),
+    comments() {
+      console.log(
+        this.Comments.filter((item) => item.post_idpost === this.post.idposts)
+      );
+      return this.Comments.filter(
+        (item) => item.post_idpost === this.post.idposts
+      );
+    },
+    getTodayDate() {
+      const date = new Date();
+      let postDate = new Date(this.post.time_post);
+
+      let seconds = Math.floor((date - postDate) / 1000);
+
+      let interval = seconds / 31536000;
+
+      if (interval > 1) {
+        return "il y a " + Math.floor(interval) + " ans";
+      }
+      interval = seconds / 2592000;
+      if (interval > 1) {
+        return "il y a " + Math.floor(interval) + " mois";
+      }
+      interval = seconds / 86400;
+      if (interval > 1) {
+        return "il y a " + Math.floor(interval) + " jours";
+      }
+      interval = seconds / 3600;
+      if (interval > 1) {
+        return "il y a " + Math.floor(interval) + " heures";
+      }
+      interval = seconds / 60;
+      if (interval > 1) {
+        return "il y a " + Math.floor(interval) + " minutes";
+      }
+      return "il y a " + Math.floor(seconds) + " secondes";
+    },
+  },
   methods: {
     ...mapActions({
-      candelete: "Users/canDelete",
+      deletePost: "Posts/deletePost",
+      likeDislikePost: "Posts/likeDislikePost",
+      addCom: "Comments/addCom",
+      getCom: "Comments/getCom",
     }),
-    canDel(iduser) {
-      this.candelete(iduser);
+
+    canDelete(iduser) {
+      let isAdmin = tokenInfo().role;
+      const user = JSON.parse(sessionStorage.getItem("token")).user;
+      if (user === iduser || isAdmin === "admin") {
+        return true;
+      }
+      return false;
     },
     // resize des zones de textes
     autoResize(event) {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
-    check() {
-      return this.posts;
+    delPost() {
+      this.deletePost(this.post.idposts);
     },
+    createCom() {
+      let content = this.content;
+      let idposts = this.post.idposts;
+      let iduser = this.iduser;
+      const fullPost = { content, idposts, iduser };
+      this.addCom(fullPost).then(() => this.getCom());
+    },
+    likes() {
+      this.likeDislikePost(this.post.idposts);
+    },
+    getComment() {
+      this.getCom(this.post.idposts);
+    },
+  },
+  created() {
+    this.getComment();
   },
 };
 </script>
@@ -106,19 +197,32 @@ export default {
 .posts {
   button {
     background-color: white;
+    border: none;
     .btn--light {
       color: black;
     }
   }
   .delete {
     margin-left: auto;
+    .dropdown button {
+      color: white;
+      &:hover {
+        color: white;
+        cursor: pointer;
+      }
+    }
   }
   .blockquote-footer {
     color: rgb(207, 207, 207);
   }
-  p {
+  .content {
+    font-size: 1.15rem;
     font-weight: bold;
     color: #2c3e50;
+  }
+  .picturePost {
+    max-height: 300px;
+    width: auto;
   }
 }
 .vues {
@@ -135,12 +239,12 @@ export default {
   }
 }
 .comment-title p {
+  font-size: 0.9rem;
   color: white;
 }
-.dropdown button {
-  color: white;
-  &:hover {
-    color: white;
-  }
+.comArea {
+  scrollbar-width: thin;
+  max-height: 275px;
+  overflow-y: scroll;
 }
 </style>

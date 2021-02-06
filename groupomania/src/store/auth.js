@@ -1,25 +1,35 @@
 import axios from '@/main';
 
-const store = JSON.parse(localStorage.getItem('token'));
+function logged() {
+  const sessionInfo = JSON.parse(sessionStorage.getItem('token'))
+  if (sessionInfo !== null) {
+    return { logged: true, userid: sessionInfo.user }
+  }
+  return { logged: false, userid: null }
+}
 
 export default {
   stateFactory: true,
   namespaced: true,
   state: {
-    token: store,
-    user: null
+    logged: logged().logged,
+    token: null,
+    user: logged().userid
   },
   getters: {
     loggedUser: state => {
-      return state.token
-    }
+      return state.logged
+    },
+    iduser: (state) => state.user
   },
   mutations: {
     SET_TOKEN(state, token, user) {
+      state.logged = true;
       state.user = user;
       state.token = token;
     },
     LOGOUT(state) {
+      state.logged = false;
       state.token = null;
       state.user = null;
     }
@@ -29,7 +39,7 @@ export default {
       return axios.post('/auth/login', credentials)
         .then((res) => {
           if (res.data.token) {
-            localStorage.setItem('token', JSON.stringify(res.data));
+            sessionStorage.setItem('token', JSON.stringify(res.data));
           }
           dispatch('attempt', res.data.token, res.data.user);
           return Promise.resolve(res.data);
@@ -43,7 +53,7 @@ export default {
       return axios.post('/auth/signup', credentials)
         .then((res) => {
           if (res.data.token) {
-            localStorage.setItem('token', JSON.stringify(res.data));
+            sessionStorage.setItem('token', JSON.stringify(res.data));
           }
           dispatch('attempt', res.data.token, res.data.user);
           return Promise.resolve(res.data);
@@ -57,7 +67,7 @@ export default {
       commit('SET_TOKEN', token, user)
     },
     logout({ commit }) {
-      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       commit('LOGOUT');
       document.location.reload();
     }

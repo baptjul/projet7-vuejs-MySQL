@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '@/views/Home.vue'
+import store from '@/store'
 
 Vue.use(VueRouter)
+
 
 const routes = [
   {
@@ -24,9 +26,11 @@ const routes = [
     meta: { pub: true }
   },
   {
-    path: '/profile/:userId',
-    name: 'UserProfile'
-  }
+    path: '/profile/:id',
+    name: 'UserProfile',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Profile.vue'),
+    meta: { auth: true }
+  },
 ]
 
 const router = new VueRouter({
@@ -36,7 +40,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((route) => route.meta.auth)
   const publicPage = to.matched.some((route) => route.meta.pub)
-  const authed = localStorage.getItem('token')
+  const authed = store.getters['Auth/loggedUser'];
   if (authRequired && !authed) {
     next('/connexion')
   } if (publicPage && authed) {

@@ -16,9 +16,3 @@ dbconfig.connect((err, test) => {
 });
 
 module.exports = dbconfig;
-
-/*
-Db_host = 'localhost'
-Db_user = 'Groupomania_user'
-Db_password = 'ZUTwc5aMJhVmeMCe93hjsSH8X'
-DataBase = 'groupomania'*/

@@ -7,7 +7,7 @@ exports.createPost = (req, res, next) => {
     if (data.image) {
         postPicture = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
     } else {
-        postPicture = 'NULL'
+        postPicture = null
     }
     let values = [data.post, postPicture, data.iduser]
     let sql = "INSERT INTO posts (text_content, image_content, time_post, user_iduser) VALUES (?, ?, CURRENT_TIMESTAMP(), ?);"
@@ -41,26 +41,30 @@ exports.getUserPost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res) => {
-    const id = req.body.idposts
-    const image = req.imag_url
+    const id = req.params.id
     let value = [id]
-    let sql = "CALL deletePost(?);"
-    db.query(sql, value, (error, result) => {
+    let checkPost = "SELECT idposts, image_content FROM posts WHERE idposts = ?"
+    db.query(checkPost, value, (error, result) => {
         if (error) {
             return res.status(401).json(error, "database not connected !");
-        } if (image !== null) {
-            const filename = result.imageUrl.split('/images/posts/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                return res.status(200).json(result);
-            })
+        } if (result[0].image_content !== null || '') {
+            const filename = result[0].image_content.split('/images/posts/')[1];
+            fs.unlink(`images/${filename}`)
         }
-        return res.status(200).json(result);
+        let sql = "DELETE FROM posts WHERE idposts = ?;"
+        db.query(sql, value, (error, result) => {
+            if (error) {
+                return res.status(401).json(error, "database not connected !");
+            }
+            console.log('message supprimé')
+            return res.status(200).json(result);
+        });
     });
 }
 
 exports.likeOnPost = (req, res, next) => {
-    const iduser = req.body.iduser
-    const idpost = req.params.id
+    const iduser = req.params.iduser
+    const idpost = req.params.idposts
     let value = [idpost, iduser]
     let sql = `SELECT * FROM likes WHERE likes.post_idposts = ? AND likes.user_iduser = ?`
     db.query(sql, value, (error, result) => {
@@ -72,7 +76,7 @@ exports.likeOnPost = (req, res, next) => {
 };
 
 exports.likeAndDislikePosts = (req, res, next) => {
-    const postid = req.body.idposts
+    const postid = req.body.idpost
     const userid = req.body.iduser;
     const data = [postid, userid]
     const dataRemoved = [0, postid, userid]
@@ -81,7 +85,6 @@ exports.likeAndDislikePosts = (req, res, next) => {
         case 0:
             let sql = "SELECT * FROM likes WHERE likes.posts_idposts = ? AND likes.user_iduser = ?;"
             db.query(sql, data, (error, result) => {
-                console.log(result[0])
                 if (error) {
                     return res.status(401).json(error, "database not connected !");
                 }
@@ -100,7 +103,6 @@ exports.likeAndDislikePosts = (req, res, next) => {
         case 1:
             let updateLike = "INSERT INTO likes (likes, posts_idposts, user_iduser) VALUES (?, ?, ?);"
             db.query(updateLike, dataAdded, (error, result) => {
-                console.log(result)
                 if (error) {
                     return res.status(401).json(error);
                 }
@@ -111,7 +113,6 @@ exports.likeAndDislikePosts = (req, res, next) => {
         case -1:
             let updateDislike = "INSERT INTO likes (dislikes, posts_idposts, user_iduser) VALUES (?, ?, ?);"
             db.query(updateDislike, dataAdded, (error, result) => {
-                console.log(result)
                 if (error) {
                     return res.status(401).json(error);
                 }

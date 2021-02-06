@@ -19,12 +19,12 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav links">
-        <li class="nav-item">
+        <li class="nav-item mt-3 mt-lg-0">
           <router-link class="nav-link" to="/">
             <div class="links__root"><i class="fas fa-home"></i>Home</div>
           </router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item mt-2 mt-lg-0">
           <router-link class="nav-link" to="/profile">
             <div class="links__root">
               <i class="fas fa-user-circle"></i>Profil
@@ -32,7 +32,7 @@
           </router-link>
         </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0">
+      <!--<form class="form-inline my-2 my-lg-0">
         <input
           class="form-control mr-sm-2"
           type="search"
@@ -42,8 +42,8 @@
         <button class="btn btn-danger mr-4 my-md-0" type="submit">
           Search
         </button>
-      </form>
-      <button class="disconnect mt-sm-2-" @click.prevent="Disconnect">
+      </form>-->
+      <button class="disconnect mt-3 mt-lg-0" @click.prevent="Disconnect">
         Déconnexion
       </button>
     </div>
@@ -82,6 +82,9 @@ export default {
   i {
     margin-right: 5px;
     font-size: 1.5rem;
+  }
+  .nav-item {
+    text-align: left;
   }
 }
 

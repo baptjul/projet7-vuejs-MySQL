@@ -10,7 +10,7 @@ const { CommentSchema } = require('../models/Comments');
 
 const comCtrl = require('../controllers/comments')
 
-router.get('/', comCtrl.getComments);
+router.get('/:id', comCtrl.getComments);
 router.post('/', auth, multer, joiValidate(CommentSchema), comCtrl.createComment);
 router.post('/:id/likeCom', auth, comCtrl.likeAndDislikeComments)
 router.delete('/:id', auth, comCtrl.deleteComment);

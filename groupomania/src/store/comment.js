@@ -6,45 +6,41 @@ export default {
   namespaced: true,
   state: {
     error: '',
-    comment: [],
-    //listLength = 5,
+    comments: [],
   },
   getters: {
-    comment: (state) => state.comment,
+    comment: (state) => state.comments,
     ErrorMessage: (state) => state.error,
   },
   mutations: {
-    ADD_COM(state, posts) {
-      state.comment = posts
+    ADD_COM(state, comments) {
+      comments.forEach((item) => {
+        if (!state.comments.find((comment) => comment.idcomments === item.idcomments)) {
+          state.comments.push(item);
+        }
+      });
     },
     ERROR_MESSAGE(state, message) {
       state.error = message
     },
-    /*SHOW_MORE(state) {
-      state.listLength += 5
-    },*/
     REMOVE_COM(state, idcom) {
-      state.comment = state.comment.filter(com => com.id !== idcom)
+      state.comments = state.comments.filter(com => com.id !== idcom)
     },
     CREATE_COM(state, newPost) {
-      state.comment.unshift(newPost)
-      state.comment = [...state.comment]
+      state.comments.unshift(newPost)
+      state.comments = [...state.comment]
     },
   },
   actions: {
-    getCom({ commit }) {
-      return axios.get('/comments/', { headers: headerAuth() })
+    getCom({ commit }, idpost) {
+      return axios.get(`/comments/${idpost}`, { headers: headerAuth() })
         .then(response => {
-          console.log(response.data[0])
-          if (response.data[0]) {
-            commit('ADD_COM', response.data[0])
-            return Promise.resolve(response.data);
-          }
+          commit('ADD_COM', response.data[0])
+          return Promise.resolve(response.data);
         })
-        .catch((err) => {
-          const message = err.response.data;
-          commit('ERROR_MESSAGE', message)
-          return Promise.reject(message);
+        .catch((error) => {
+          commit('ERROR_MESSAGE', error)
+          return Promise.reject(error);
         })
     },
     deleteCom({ commit }, idcom) {
@@ -53,22 +49,20 @@ export default {
           commit('REMOVE_COM', idcom);
           return Promise.resolve(response.data);
         })
-        .catch((err) => {
-          const message = err.response.data;
-          commit('ERROR_MESSAGE', message)
-          return Promise.reject(message);
+        .catch((error) => {
+          commit('ERROR_MESSAGE', error)
+          return Promise.reject(error);
         });
     },
     addCom({ commit }, data) {
-      return axios.post('/posts/', data, { headers: headerAuth() })
+      return axios.post('/comments/', data, { headers: headerAuth() })
         .then((res) => {
           commit('CREATE_COM', res.data);
           return Promise.resolve(res.data);
         })
-        .catch((err) => {
-          const message = err.response.data;
-          commit('ERROR_MESSAGE', message)
-          return Promise.reject(message);
+        .catch((error) => {
+          commit('ERROR_MESSAGE', error)
+          return Promise.reject(error);
         });
     },
     likeDislikeCom({ commit }, idcom) {
@@ -76,10 +70,9 @@ export default {
         .then((res) => {
           commit('LIKE', res.data);
         })
-        .catch((err) => {
-          const message = err.response.data;
-          commit('ERROR_MESSAGE', message)
-          return Promise.reject(message);
+        .catch((error) => {
+          commit('ERROR_MESSAGE', error)
+          return Promise.reject(error);
         });
     }
   }
