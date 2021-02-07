@@ -32,27 +32,19 @@ export default {
     ERROR_MESSAGE(state, message) {
       state.error = message
     },
-    /*SHOW_MORE(state) {
-      state.listLength += 5
-    },*/
     REMOVE_POST(state, postId) {
-      let oldPostIndex = '';
-      state.posts.forEach((item, index) => {
-        if (item.id === postId) {
-          oldPostIndex = index;
-        }
-      });
-      state.posts.splice(oldPostIndex, 1);
+      state.posts = state.posts.filter(post => post.idposts !== postId)
     },
     CREATE_POST(state, newPost) {
-      state.posts.push(newPost)
+      state.posts.unshift(newPost)
+      state.posts = [...state.posts]
     },
   },
   actions: {
     getAllPosts({ commit }) {
       return axios.get('/posts/', { headers: headerAuth() })
         .then(response => {
-          commit('ADD_POST', response.data[0])
+          commit('ADD_POST', response.data)
           return Promise.resolve(response.data);
         })
         .catch((error) => {
@@ -76,7 +68,7 @@ export default {
     getUserPost({ commit }, iduser) {
       return axios.get(`/posts/${iduser}`, { headers: headerAuth() })
         .then(response => {
-          commit('ADD_USERPOST', response.data[0])
+          commit('ADD_USERPOST', response.data)
           return Promise.resolve(response.data);
         })
         .catch((error) => {

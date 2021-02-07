@@ -5,10 +5,6 @@
         <div class="col-md-5">
           <div class="profile-img">
             <img :src="this.User.profile_picture" alt="profil picture" />
-            <div class="file btn btn-lg btn-primary">
-              Modifier Photo
-              <input type="file" name="file" />
-            </div>
           </div>
         </div>
         <div class="col-md-7">
@@ -128,12 +124,6 @@
                       </p>
                     </div>
                   </div>
-                  <input
-                    type="submit"
-                    class="profile-edit-btn mt-4"
-                    name="btnAddMore"
-                    value="modifier"
-                  />
                 </div>
               </div>
             </div>
@@ -155,15 +145,13 @@ export default {
   },
   data() {
     return {
-      defaultDescription:
-        "Ajoutez une description à votre profil et retrouver la ici",
+      defaultDescription: "L'utilisateur n'a pas encore de description",
     };
   },
   computed: {
     ...mapGetters({
       User: "Users/User",
       userPosts: "Posts/UserPosts",
-      iduser: "Auth/iduser",
     }),
   },
 };

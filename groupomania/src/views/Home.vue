@@ -19,21 +19,40 @@
                   id="post"
                   rows="3"
                   placeholder="Ecrivez-quelque chose !"
-                  required
                   v-model="content"
                 ></textarea>
               </div>
-              <div class="under-form">
-                <input
-                  type="file"
-                  class="form-control-file pt-1"
-                  id="post_picture"
-                />
-
+              <div class="under-form mt-2">
+                <div class="image-upload mt-2 ml-3">
+                  <label for="file-input">
+                    <i class="fas fa-upload"></i>
+                  </label>
+                  <input
+                    id="file-input"
+                    ref="myFiles"
+                    type="file"
+                    @change="previewFiles"
+                  />
+                </div>
+                <div class="mt-2" v-if="files !== null">
+                  <i class="fas fa-check"></i>
+                </div>
+                <button
+                  role="button"
+                  type="button"
+                  class="btn bg-transparent mt-2"
+                  data-toggle="dropdown"
+                  v-if="files !== null"
+                >
+                  <i class="fas fa-times" v-on:click.prevent="removeFile()"
+                    ><p class="ml-2">retirer l'image</p></i
+                  >
+                </button>
                 <button
                   type="submit"
-                  class="btn btn--light float-right"
+                  class="btn btn--light ml-auto"
                   @click="publishPost()"
+                  v-if="files !== null || content !== ''"
                 >
                   Poster
                 </button>
@@ -65,6 +84,7 @@ export default {
   data() {
     return {
       content: "",
+      files: null,
     };
   },
   computed: {
@@ -84,11 +104,24 @@ export default {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
+    previewFiles() {
+      this.files = this.$refs.myFiles.files[0];
+      console.log(this.files);
+    },
+    removeFile() {
+      this.files = null;
+    },
     publishPost() {
       let post = this.content;
       let iduser = this.iduser;
-      let body = { post, iduser };
-      this.addPost(body);
+      let image = "";
+      if (this.files !== null) {
+        image = this.files;
+      }
+      let body = { post, iduser, image };
+      this.addPost(body)
+        .then(() => this.getAllPosts())
+        .then(() => (document.getElementById("post").value = ""));
     },
     async fetchPost() {
       await this.getAllPosts();
@@ -105,6 +138,17 @@ export default {
 </script>
 
 <style lang="scss">
+.image-upload {
+  i {
+    font-size: 1.8rem;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  input {
+    display: none;
+  }
+}
 .feed {
   button {
     background-color: white;
@@ -118,5 +162,10 @@ export default {
 }
 .under-form {
   display: flex;
+  align-items: center;
+  .fa-check {
+    font-size: 1.5rem;
+    color: green;
+  }
 }
 </style>

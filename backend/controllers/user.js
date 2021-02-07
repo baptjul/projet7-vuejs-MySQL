@@ -98,7 +98,7 @@ exports.updateUser = (req, res, next) => {
     profile_picture = `${req.protocol}://${req.get('host')}/images/user/icon.png`
   }
   let values = [email, username, profile_picture, firstname, lastname, description, position, birthday, id]
-  let sql = "CALL updateUser(?, ?, ?, ?, ?, ?, ?, ?, ?);"
+  let sql = "UPDATE user SET email= ?, username= ?, profile_picture= ?, firstname= ?, lastname= ?, description= ?, position= ?, birthday= ? WHERE iduser = ?;"
   db.query(sql, values, (error, result) => {
     if (error) {
       return res.status(401).json(error);

@@ -4,7 +4,10 @@ const db = require('../dbconfig');
 
 exports.getComments = (req, res, next) => {
     let id = [req.params.id]
-    let sql = "CALL getComments(?)"
+    let sql = `SELECT idcomments, content, time_comment, posts_idposts, user_iduser, iduser, username, profile_picture,
+    (SELECT COUNT(likes) as commentLikes FROM likes WHERE likes.comments_idcomments = idcomments) Likes,
+    (SELECT COUNT(dislikes) as commentDislikes FROM likes WHERE likes.comments_idcomments = idcomments) Dislikes
+    FROM comments INNER JOIN user ON iduser = comments.user_iduser WHERE comments.posts_idposts = ? ORDER BY time_comment DESC;`
     db.query(sql, id, (error, result) => {
         if (error) {
             return res.status(400).json(error)

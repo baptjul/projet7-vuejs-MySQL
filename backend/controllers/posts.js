@@ -5,7 +5,7 @@ exports.createPost = (req, res, next) => {
     let data = req.body
     let postPicture = '';
     if (data.image) {
-        postPicture = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
+        postPicture = `${req.protocol}://${req.get('host')}/images/posts/${req.file.name}`
     } else {
         postPicture = null
     }
@@ -20,7 +20,11 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.getPost = (req, res, next) => {
-    let sql = `CALL getPosts`
+    let sql = `SELECT idposts, text_content, image_content, time_post, user_iduser, iduser, username, profile_picture,
+    (SELECT COUNT(likes) AS postLikes FROM likes WHERE likes.posts_idposts = idposts) Likes,
+    (SELECT COUNT(dislikes) AS postDisLikes FROM likes WHERE likes.posts_idposts = idposts) Dislikes,
+    (SELECT COUNT(idcomments) AS NbComments FROM comments WHERE comments.posts_idposts = idposts) Comments
+    FROM posts INNER JOIN user ON iduser = posts.user_iduser ORDER BY time_post DESC;`
     db.query(sql, (error, result) => {
         if (error) {
             return res.status(400).json(error)
@@ -31,7 +35,11 @@ exports.getPost = (req, res, next) => {
 
 exports.getUserPost = (req, res, next) => {
     let id = [req.params.id]
-    let sql = `CALL getPostUser(?)`
+    let sql = `SELECT idposts, text_content, image_content, time_post, user_iduser, iduser, username, profile_picture,
+    (SELECT COUNT(likes) AS postLikes FROM likes WHERE likes.posts_idposts = idposts) Likes,
+    (SELECT COUNT(dislikes) AS postDisLikes FROM likes WHERE likes.posts_idposts = idposts) Dislikes,
+    (SELECT COUNT(idcomments) AS NbComments FROM comments WHERE comments.posts_idposts = idposts) Comments
+    FROM posts INNER JOIN user ON iduser = posts.user_iduser WHERE iduser = ? ORDER BY time_post DESC;`
     db.query(sql, id, (error, result) => {
         if (error) {
             return res.status(400).json(error)

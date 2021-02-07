@@ -19,11 +19,11 @@
       </div>
       <!-- <button v-on:click="hidden = !hidden">Toggle hide and show</button> -->
     </div>
-    <div class="card-body" v-if="!hidden">
-      <p class="card-text" v-if="description !== '' || null || undefined">
-        {{ description }}
+    <div class="card-body">
+      <p class="card-text" v-if="this.User.description !== ''">
+        {{ this.User.description }}
       </p>
-      <p class="card-text" v-if="description === '' || null || undefined">
+      <p class="card-text" v-if="this.User.description === ''">
         {{ defaultDescription }}
       </p>
       <hr />
@@ -41,8 +41,6 @@ export default {
   name: "userHome",
   data() {
     return {
-      hidden: false,
-      description: this.User.description,
       defaultDescription: "Ajoutez une description et retrouver la ici",
     };
   },
@@ -50,6 +48,12 @@ export default {
     ...mapGetters({
       User: "Users/User",
     }),
+    isDescription() {
+      if (this.User.description !== null || "") {
+        return this.User.description;
+      }
+      return "Ajoutez une description et retrouver la ici";
+    },
   },
 };
 </script>

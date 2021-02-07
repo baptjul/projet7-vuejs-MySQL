@@ -9,10 +9,16 @@
           width="45"
           class="mr-3 rounded-circle img-thumbnail shadow-sm"
         />
-        <router-link to="`/profile`"
+        <router-link
+          :to="`/profile/${post.user_iduser}`"
+          v-if="post.user_iduser !== this.iduser"
+        >
+          <h3 class="profil_link">{{ post.username }}</h3></router-link
+        >
+        <router-link to="/profile" v-if="post.user_iduser === this.iduser"
           ><h3 class="profil_link">{{ post.username }}</h3></router-link
         >
-        <div class="ml-3 blockquote-footer">{{ getTodayDate }}</div>
+        <div class="ml-3 blockquote-footer">{{ timeSincePost }}</div>
         <!-- delete button -->
         <div class="dropdown delete" v-if="canDelete(post.user_iduser)">
           <button
@@ -80,7 +86,7 @@
       <hr />
       <div class="comArea">
         <Comment
-          v-for="comment in Comments"
+          v-for="comment in filterCom"
           :key="comment.idcomments"
           :comment="comment"
         />
@@ -111,6 +117,11 @@ export default {
       Comments: "Comments/comment",
       iduser: "Auth/iduser",
     }),
+    filterCom() {
+      return this.Comments.filter(
+        (com) => com.posts_idposts === this.post.idposts
+      );
+    },
     comments() {
       console.log(
         this.Comments.filter((item) => item.post_idpost === this.post.idposts)
@@ -119,7 +130,7 @@ export default {
         (item) => item.post_idpost === this.post.idposts
       );
     },
-    getTodayDate() {
+    timeSincePost() {
       const date = new Date();
       let postDate = new Date(this.post.time_post);
 
@@ -178,7 +189,9 @@ export default {
       let idposts = this.post.idposts;
       let iduser = this.iduser;
       const fullPost = { content, idposts, iduser };
-      this.addCom(fullPost).then(() => this.getCom());
+      this.addCom(fullPost)
+        .then(() => this.getCom(this.post.idposts))
+        .then(() => (document.getElementById("comment").value = ""));
     },
     likes() {
       this.likeDislikePost(this.post.idposts);
@@ -208,7 +221,6 @@ export default {
       color: white;
       &:hover {
         color: white;
-        cursor: pointer;
       }
     }
   }

@@ -16,26 +16,26 @@ export default {
     ADD_COM(state, comments) {
       comments.forEach((item) => {
         if (!state.comments.find((comment) => comment.idcomments === item.idcomments)) {
-          state.comments.push(item);
+          state.comments.unshift(item);
         }
       });
     },
     ERROR_MESSAGE(state, message) {
       state.error = message
     },
-    REMOVE_COM(state, idcom) {
-      state.comments = state.comments.filter(com => com.id !== idcom)
+    REMOVE_COM(state, idcomments) {
+      state.comments = state.comments.filter(comment => comment.idcomments !== idcomments)
     },
-    CREATE_COM(state, newPost) {
-      state.comments.unshift(newPost)
-      state.comments = [...state.comment]
+    CREATE_COM(state, newCom) {
+      state.comments.unshift(newCom)
+      state.comments = [...state.comments]
     },
   },
   actions: {
     getCom({ commit }, idpost) {
       return axios.get(`/comments/${idpost}`, { headers: headerAuth() })
         .then(response => {
-          commit('ADD_COM', response.data[0])
+          commit('ADD_COM', response.data)
           return Promise.resolve(response.data);
         })
         .catch((error) => {

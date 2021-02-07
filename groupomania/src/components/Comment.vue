@@ -23,7 +23,9 @@
           <i class="fas fa-ellipsis-v white"></i>
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="#">supprimer</a>
+          <a class="dropdown-item" v-on:click.prevent="deleteOption()"
+            >supprimer</a
+          >
         </div>
       </div>
       <!--<div class="d-flex vues">
@@ -60,9 +62,7 @@ export default {
       return false;
     },
     deleteOption() {
-      this.deleteComment(this.comment.idcomments).then(() => {
-        this.$emit("getCom");
-      });
+      this.deleteCom(this.comment.idcomments);
     },
   },
 };
