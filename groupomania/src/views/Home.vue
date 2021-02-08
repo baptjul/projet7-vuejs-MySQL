@@ -21,6 +21,12 @@
                   placeholder="Ecrivez-quelque chose !"
                   v-model="content"
                 ></textarea>
+                <img
+                  id="preview"
+                  class="w-50 mt-2"
+                  v-if="preview"
+                  :src="preview"
+                />
               </div>
               <div class="under-form mt-2">
                 <div class="image-upload mt-2 ml-3">
@@ -31,7 +37,7 @@
                     id="file-input"
                     ref="myFiles"
                     type="file"
-                    @change="previewFiles"
+                    @change="previewFiles($event)"
                   />
                 </div>
                 <div class="mt-2" v-if="files !== null">
@@ -48,6 +54,7 @@
                     ><p class="ml-2">retirer l'image</p></i
                   >
                 </button>
+
                 <button
                   type="submit"
                   class="btn btn--light ml-auto"
@@ -85,6 +92,7 @@ export default {
     return {
       content: "",
       files: null,
+      preview: null,
     };
   },
   computed: {
@@ -104,27 +112,28 @@ export default {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
-    previewFiles() {
+    previewFiles(e) {
       this.files = this.$refs.myFiles.files[0];
+      const target = e.target.files[0];
+      this.preview = URL.createObjectURL(target);
       console.log(this.files);
     },
     removeFile() {
       this.files = null;
+      this.preview = null;
     },
     publishPost() {
       let post = this.content;
       let iduser = this.iduser;
-      let image = "";
+      let file = "";
       if (this.files !== null) {
-        image = this.files;
+        file = this.files;
       }
-      let body = { post, iduser, image };
+      let body = { post, iduser, file };
       this.addPost(body)
         .then(() => this.getAllPosts())
-        .then(() => (document.getElementById("post").value = ""));
-    },
-    async fetchPost() {
-      await this.getAllPosts();
+        .then(() => (document.getElementById("post").value = ""))
+        .catch((error) => console.log(error));
     },
   },
   created() {

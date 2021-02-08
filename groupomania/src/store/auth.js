@@ -8,6 +8,7 @@ function logged() {
   return { logged: false, userid: null }
 }
 
+
 export default {
   stateFactory: true,
   namespaced: true,

@@ -28,6 +28,7 @@ export default {
     updateUser({ commit }, { id, data }) {
       return axios.put(`auth/user/${id}`, data, { headers: headerAuth() })
         .then((response) => {
+          console.log(response)
           commit('setUser', response.data[0]);
         })
         .catch((error) => {

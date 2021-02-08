@@ -13,51 +13,53 @@
         </div>
         <div class="col-md-7">
           <div class="profile-head">
-            <h4>
+            <h2>
               {{ this.User.username }}
-            </h4>
-            <h5 class="mt-1" v-show="this.User.position !== ''">
+            </h2>
+            <h3 class="mt-1" v-show="this.User.position !== ''">
               {{ this.User.position }}
-            </h5>
-            <h6 class="mt-1" v-show="this.User.description !== ''">
+            </h3>
+            <h5 class="mt-1" v-show="this.User.description !== ''">
               {{ this.User.description }}
-            </h6>
-            <h6
+            </h5>
+            <h5
               class="mt-1 font-weight-light font-italic"
               v-show="this.User.description === ''"
             >
               {{ defaultDescription }}
-            </h6>
-            <ul class="nav nav-tabs mt-5" id="myTab" role="tablist">
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  id="home-tab"
-                  data-toggle="tab"
-                  href="#home"
-                  role="tab"
-                  aria-controls="home"
-                  aria-selected="true"
-                  >Posts</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="profile-tab"
-                  data-toggle="tab"
-                  href="#profile"
-                  role="tab"
-                  aria-controls="profile"
-                  aria-selected="false"
-                  >Profil</a
-                >
-              </li>
-            </ul>
+            </h5>
           </div>
         </div>
       </div>
       <div class="row justify-content-center">
+        <div class="col-12">
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                id="home-tab"
+                data-toggle="tab"
+                href="#home"
+                role="tab"
+                aria-controls="home"
+                aria-selected="true"
+                >Posts</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="profile-tab"
+                data-toggle="tab"
+                href="#profile"
+                role="tab"
+                aria-controls="profile"
+                aria-selected="false"
+                >Profil</a
+              >
+            </li>
+          </ul>
+        </div>
         <div class="col-lg-10">
           <hr />
           <div class="tab-content profile-tab" id="myTabContent">
@@ -67,14 +69,11 @@
               role="tabpanel"
               aria-labelledby="home-tab"
             >
-              <!-- ____________________________________________________________ -->
               <Posts
                 v-for="post in userPosts"
                 :key="post.idposts"
                 :post="post"
               />
-
-              <!-- ____________________________________________________________ -->
             </div>
             <div
               class="tab-pane fade"
@@ -82,58 +81,187 @@
               role="tabpanel"
               aria-labelledby="profile-tab"
             >
-              <div class="row justify-content-center">
+              <div class="row justify-content-center userInfo">
                 <div class="col-md-8">
-                  <div class="row">
+                  <div class="row ml-5 align-middle">
                     <div class="col-md-4"><label>Pseudo:</label></div>
-                    <div class="col-md-8">
-                      <p>{{ this.User.username }}</p>
+                    <div class="col-md-8" v-if="!modify">
+                      <div>
+                        <p>{{ this.User.username }}</p>
+                      </div>
+                    </div>
+                    <div class="d-flex col-md-8" v-if="modify">
+                      <input
+                        type="text"
+                        class="input"
+                        name="username"
+                        v-model="update.username"
+                        required
+                      />
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row mt-1 ml-5">
                     <div class="col-md-4"><label>Email:</label></div>
-                    <div class="col-md-8">
-                      <p>{{ this.User.email }}</p>
+                    <div class="col-md-4" v-if="!modify">
+                      <div>
+                        <p>{{ this.User.email }}</p>
+                      </div>
+                    </div>
+                    <div class="col-md-4" v-if="modify">
+                      <input
+                        type="email"
+                        class="input"
+                        name="email"
+                        placeholder="email*"
+                        v-if="modify"
+                        v-model="update.email"
+                        required
+                      />
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.lastname !== ''">
+                  <div class="row mt-1 ml-5">
                     <div class="col-md-4"><label>Nom:</label></div>
-                    <div class="col-md-8">
-                      <p>{{ this.User.lastname }}</p>
+                    <div class="col-md-8" v-if="!modify">
+                      <div v-if="this.User.lastname !== ''">
+                        <p>{{ this.User.lastname }}</p>
+                      </div>
+                      <div v-if="this.User.lastname === ''">
+                        <p class="font-weight-light font-italic text-muted">
+                          {{ placeHolder }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-8" v-if="modify">
+                      <input
+                        type="text"
+                        class="input"
+                        name="lastname"
+                        placeholder="nom"
+                        v-if="modify"
+                        v-model="update.lastname"
+                      />
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.firstname !== ''">
+                  <div class="row mt-1 ml-5">
                     <div class="col-md-4"><label>Prenom:</label></div>
-                    <div class="col-md-8">
-                      <p>{{ this.User.firstname }}</p>
+                    <div class="col-md-4" v-if="!modify">
+                      <div v-if="this.User.firstname !== ''">
+                        <p>{{ this.User.firstname }}</p>
+                      </div>
+                      <div v-if="this.User.firstname === ''">
+                        <p class="font-weight-light font-italic text-muted">
+                          {{ placeHolder }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-4" v-if="modify">
+                      <input
+                        type="text"
+                        class="input"
+                        name="firstname"
+                        placeholder="prenom"
+                        v-if="modify"
+                        v-model="update.firstname"
+                      />
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.position !== ''">
+                  <div class="row mt-1 ml-5">
                     <div class="col-md-4"><label>Post:</label></div>
-                    <div class="col-md-8">
-                      <p>{{ this.User.position }}</p>
+                    <div class="col-md-8" v-if="!modify">
+                      <div v-if="this.User.position !== ''">
+                        <p>{{ this.User.position }}</p>
+                      </div>
+                      <div v-if="this.User.position === ''">
+                        <p class="font-weight-light font-italic text-muted">
+                          {{ placeHolder }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-8" v-if="modify">
+                      <input
+                        type="text"
+                        class="input"
+                        name="position"
+                        placeholder="post"
+                        v-if="modify"
+                        v-model="update.position"
+                      />
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.birthday !== ''">
+                  <div class="row mt-1 ml-5">
                     <div class="col-md-4"><label>Anniversaire:</label></div>
-                    <div class="col-md-8">
-                      <p>{{ this.User.birthday }}</p>
+                    <div class="col-md-8" v-if="!modify">
+                      <div v-if="this.User.birthday !== null">
+                        <p>{{ this.User.birthday }}</p>
+                      </div>
+                      <div v-if="this.User.birthday === null">
+                        <p class="font-weight-light font-italic text-muted">
+                          {{ placeHolder }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-8" v-if="modify">
+                      <input
+                        type="date"
+                        class="input"
+                        name="birthday"
+                        placeholder="birthday"
+                        v-if="modify"
+                        v-model="update.birthday"
+                      />
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.description !== ''">
-                    <div class="col-md-4"><label>Description:</label></div>
-                    <div class="col-md-8">
-                      <p>
-                        {{ this.User.description }}
-                      </p>
+                  <div class="row mt-1 ml-5">
+                    <div class="col-md-4">
+                      <label>Description:</label>
+                    </div>
+                    <div class="col-md-8" v-if="!modify">
+                      <div v-if="this.User.description !== ''">
+                        <p>{{ this.User.description }}</p>
+                      </div>
+                      <div v-if="this.User.description === ''">
+                        <p class="font-weight-light font-italic text-muted">
+                          {{ placeHolder }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-8" v-if="modify">
+                      <textarea
+                        @input="autoResize"
+                        class="form-control textarea input"
+                        id="description"
+                        rows="3"
+                        placeholder="ajoutez une description"
+                        v-model="update.description"
+                      ></textarea>
                     </div>
                   </div>
                   <input
                     type="submit"
-                    class="profile-edit-btn mt-4"
+                    class="profile-edit-btn mt-4 mr-1"
                     name="btnAddMore"
-                    value="modifier"
+                    value="modifer"
+                    v-on:click="modify = !modify"
+                    v-if="!modify"
                   />
+                  <div class="d-flex">
+                    <input
+                      type="submit"
+                      class="profile-edit-btn mt-4 mr-1"
+                      name="btnAddMore"
+                      value="retour"
+                      v-on:click="modify = !modify"
+                      v-if="modify"
+                    />
+                    <input
+                      type="submit"
+                      class="profile-edit-btn mt-4 ml-1"
+                      name="btnAddMore"
+                      value="valider"
+                      v-if="modify"
+                      v-on:click.prevent="postUpdate()"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -146,7 +274,7 @@
 
 <script>
 import Posts from "@/components/Posts.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Profile",
@@ -155,8 +283,19 @@ export default {
   },
   data() {
     return {
+      update: {
+        username: "",
+        email: "",
+        lastname: "",
+        firstname: "",
+        position: "",
+        birthday: "",
+        description: "",
+      },
+      modify: false,
       defaultDescription:
         "Ajoutez une description à votre profil et retrouver la ici",
+      placeHolder: "dites-nous en plus",
     };
   },
   computed: {
@@ -165,6 +304,48 @@ export default {
       userPosts: "Posts/UserPosts",
       iduser: "Auth/iduser",
     }),
+  },
+  methods: {
+    ...mapActions({
+      updateUser: "Users/updateUser",
+    }),
+    autoResize(event) {
+      event.target.style.height = "auto";
+      event.target.style.height = `${event.target.scrollHeight}px`;
+    },
+    postUpdate() {
+      let iduser = this.iduser;
+      let username = this.update.username;
+      let email = this.update.email;
+      let lastname = this.update.lastname;
+      let firstname = this.update.firstname;
+      let position = this.update.position;
+      let birthday = this.update.birthday;
+      let description = this.update.description;
+      const body = {
+        username,
+        email,
+        lastname,
+        firstname,
+        position,
+        birthday,
+        description,
+      };
+      console.log(body);
+      console.log(iduser);
+      this.updateUser(iduser, body)
+        .then(() => (this.modify = false))
+        .catch((error) => console.log(error));
+    },
+  },
+  mounted() {
+    this.update.username = this.User.username;
+    this.update.email = this.User.email;
+    this.update.lastname = this.User.lastname;
+    this.update.firstname = this.User.firstname;
+    this.update.position = this.User.position;
+    this.update.birthday = this.User.birthday;
+    this.update.description = this.User.description;
   },
 };
 </script>
@@ -183,6 +364,7 @@ export default {
     width: 50%;
   }
   .nav-link {
+    background-color: rgba(0, 0, 0, 0.1);
     color: #2c3e50;
   }
   .nav-link.active {
@@ -190,6 +372,21 @@ export default {
     color: white;
     border: none;
     border-bottom: 2px solid white;
+  }
+  .input {
+    font-weight: bold;
+    scrollbar-width: none;
+    background: none;
+    text-align: center;
+    border: 3px solid #2c3e50;
+    padding: 10px 10px;
+    outline: none;
+    color: #2c3e50;
+    border-radius: 24px;
+    transition: 0.25s;
+    &:focus {
+      border-color: #fd2d01;
+    }
   }
 }
 .profile-img {
@@ -229,9 +426,6 @@ export default {
   font-weight: 600;
   color: #6c757d;
   cursor: pointer;
-}
-.profile-head .nav-tabs {
-  margin-bottom: 5%;
 }
 .profile-head .nav-tabs .nav-link {
   font-weight: 600;

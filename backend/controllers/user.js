@@ -91,14 +91,22 @@ exports.searchUsers = (req, res, next) => {
 exports.updateUser = (req, res, next) => {
   const { email, username, firstname, lastname, description, position, birthday } = req.body;
   const id = req.params.id;
-  let profile_picture = ``;
-  if (req.file) {
-    profile_picture = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
-  } else {
-    profile_picture = `${req.protocol}://${req.get('host')}/images/user/icon.png`
-  }
-  let values = [email, username, profile_picture, firstname, lastname, description, position, birthday, id]
-  let sql = "UPDATE user SET email= ?, username= ?, profile_picture= ?, firstname= ?, lastname= ?, description= ?, position= ?, birthday= ? WHERE iduser = ?;"
+  let values = [email, username, firstname, lastname, description, position, birthday, id]
+  let sql = "UPDATE user SET email= ?, username= ?, firstname= ?, lastname= ?, description= ?, position= ?, birthday= ? WHERE iduser = ?;"
+  db.query(sql, values, (error, result) => {
+    if (error) {
+      return res.status(401).json(error);
+    }
+    return res.status(200).json("User updated");
+  });
+}
+
+exports.updateProfilePicture = (req, res, next) => {
+  const data = req.body.profile_picture
+  const id = req.params.id;
+  data = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
+  let values = [data, id]
+  let sql = "UPDATE user SET profile_picture= ? WHERE iduser = ?;"
   db.query(sql, values, (error, result) => {
     if (error) {
       return res.status(401).json(error);

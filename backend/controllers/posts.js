@@ -4,8 +4,8 @@ const db = require('../dbconfig');
 exports.createPost = (req, res, next) => {
     let data = req.body
     let postPicture = '';
-    if (data.image) {
-        postPicture = `${req.protocol}://${req.get('host')}/images/posts/${req.file.name}`
+    if (req.file) {
+        postPicture = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
     } else {
         postPicture = null
     }
@@ -84,7 +84,7 @@ exports.likeOnPost = (req, res, next) => {
 };
 
 exports.likeAndDislikePosts = (req, res, next) => {
-    const postid = req.body.idpost
+    const postid = req.params.id
     const userid = req.body.iduser;
     const data = [postid, userid]
     const dataRemoved = [0, postid, userid]
@@ -96,7 +96,7 @@ exports.likeAndDislikePosts = (req, res, next) => {
                 if (error) {
                     return res.status(401).json(error, "database not connected !");
                 }
-                if ((result[0].like === 1 || result[0].dislike === 1) && result[0].dislike === 0) {
+                if ((result[0].like === 1 && result[0].dislike === 0) || (result[0].dislike === 1 && result[0].like === 0)) {
                     let connection = "DELETE FROM likes WHERE likes.posts_idposts = ? AND likes.user_iduser = ?;"
                     db.query(connection, dataRemoved, (error, result) => {
                         if (error) {

@@ -5,11 +5,6 @@ const UserSchema = joi.object({
         .alphanum()
         .min(3)
         .max(50),
-    profile_picture: joi.string()
-        .alphanum()
-        .min(3)
-        .max(50)
-        .allow(null, ''),
     email: joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'fr'] } })
         .required(),
@@ -18,6 +13,10 @@ const UserSchema = joi.object({
         .max(255)
         .allow(null, ''),
     lastname: joi.string()
+        .min(3)
+        .max(255)
+        .allow(null, ''),
+    position: joi.string()
         .min(3)
         .max(255)
         .allow(null, ''),

@@ -12,48 +12,50 @@
             <h4>
               {{ this.User.username }}
             </h4>
-            <h5 class="mt-1" v-show="this.User.position !== ''">
+            <h5 class="mt-1" v-show="this.User.position !== null">
               {{ this.User.position }}
             </h5>
-            <h6 class="mt-1" v-show="this.User.description !== ''">
+            <h6 class="mt-1" v-show="this.User.description !== null">
               {{ this.User.description }}
             </h6>
             <h6
               class="mt-1 font-weight-light font-italic"
-              v-show="this.User.description === ''"
+              v-show="this.User.description === null"
             >
               {{ defaultDescription }}
             </h6>
-            <ul class="nav nav-tabs mt-5" id="myTab" role="tablist">
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  id="home-tab"
-                  data-toggle="tab"
-                  href="#home"
-                  role="tab"
-                  aria-controls="home"
-                  aria-selected="true"
-                  >Posts</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="profile-tab"
-                  data-toggle="tab"
-                  href="#profile"
-                  role="tab"
-                  aria-controls="profile"
-                  aria-selected="false"
-                  >Profil</a
-                >
-              </li>
-            </ul>
           </div>
         </div>
       </div>
       <div class="row justify-content-center">
+        <div class="col-12 mt-3">
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                id="home-tab"
+                data-toggle="tab"
+                href="#home"
+                role="tab"
+                aria-controls="home"
+                aria-selected="true"
+                >Posts</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="profile-tab"
+                data-toggle="tab"
+                href="#profile"
+                role="tab"
+                aria-controls="profile"
+                aria-selected="false"
+                >Profil</a
+              >
+            </li>
+          </ul>
+        </div>
         <div class="col-lg-10">
           <hr />
           <div class="tab-content profile-tab" id="myTabContent">
@@ -92,31 +94,31 @@
                       <p>{{ this.User.email }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.lastname !== ''">
+                  <div class="row" v-if="this.User.lastname !== null">
                     <div class="col-md-4"><label>Nom:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.lastname }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.firstname !== ''">
+                  <div class="row" v-if="this.User.firstname !== null">
                     <div class="col-md-4"><label>Prenom:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.firstname }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.position !== ''">
+                  <div class="row" v-if="this.User.position !== null">
                     <div class="col-md-4"><label>Post:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.position }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.birthday !== ''">
+                  <div class="row" v-if="this.User.birthday !== null">
                     <div class="col-md-4"><label>Anniversaire:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.birthday }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.description !== ''">
+                  <div class="row" v-if="this.User.description !== null">
                     <div class="col-md-4"><label>Description:</label></div>
                     <div class="col-md-8">
                       <p>

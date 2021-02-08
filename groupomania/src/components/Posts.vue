@@ -191,7 +191,8 @@ export default {
       const fullPost = { content, idposts, iduser };
       this.addCom(fullPost)
         .then(() => this.getCom(this.post.idposts))
-        .then(() => (document.getElementById("comment").value = ""));
+        .then(() => (document.getElementById("comment").value = ""))
+        .catch((error) => console.log(error));
     },
     likes() {
       this.likeDislikePost(this.post.idposts);
