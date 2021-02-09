@@ -21,8 +21,8 @@ router.post('/signup', joiValidate(LogSchema), userCtrl.signup);
 router.post('/login', connexionLimiter, joiValidate(LogSchema), userCtrl.login);
 router.get('/user/:id', auth, userCtrl.getUser);
 //router.get('/search/:id', auth, userCtrl.searchUsers);
-router.put('/user/:id', joiValidate(UserSchema), userCtrl.updateUser);
-router.delete('/:id', userCtrl.deleteUser);
+router.put('/user/:id', joiValidate(UserSchema), auth, userCtrl.updateUser);
+router.delete('/:id', auth, userCtrl.deleteUser);
 
 
 module.exports = router

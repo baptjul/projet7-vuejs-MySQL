@@ -166,6 +166,7 @@ export default {
       likeDislikePost: "Posts/likeDislikePost",
       addCom: "Comments/addCom",
       getCom: "Comments/getCom",
+      getAllPosts: "Posts/getAllPosts",
     }),
 
     canDelete(iduser) {
@@ -192,6 +193,7 @@ export default {
       this.addCom(fullPost)
         .then(() => this.getCom(this.post.idposts))
         .then(() => (document.getElementById("comment").value = ""))
+        .then(() => this.getAllPosts())
         .catch((error) => console.log(error));
     },
     likes() {

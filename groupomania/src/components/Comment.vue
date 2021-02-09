@@ -3,12 +3,14 @@
     <div class="d-flex com">
       <img
         :src="comment.profile_picture"
-        alt="..."
+        alt="profile picture"
         width="40"
-        class="rounded-circle img-thumbnail mr-2"
+        class="rounded-circle img-thumbnail mr-2 align-self-start"
       />
       <router-link to="/profile"
-        ><h5 class="mr-2 text-danger">{{ comment.username }} :</h5>
+        ><h5 class="mr-2 pr-2 text-danger align-self-center">
+          {{ comment.username }}:
+        </h5>
       </router-link>
       <p>
         {{ comment.content }}
@@ -52,6 +54,7 @@ export default {
   methods: {
     ...mapActions({
       deleteCom: "Comments/deleteCom",
+      getAllPosts: "Posts/getAllPosts",
     }),
     canDelete(iduser) {
       let isAdmin = tokenInfo().role;
@@ -62,7 +65,7 @@ export default {
       return false;
     },
     deleteOption() {
-      this.deleteCom(this.comment.idcomments);
+      this.deleteCom(this.comment.idcomments).then(() => this.getAllPosts());
     },
   },
 };
@@ -70,7 +73,6 @@ export default {
 
 <style lang="scss">
 .com {
-  align-items: center;
   button {
     background-color: white;
     .btn--light {

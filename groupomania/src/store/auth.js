@@ -2,7 +2,8 @@ import axios from '@/main';
 
 function logged() {
   const sessionInfo = JSON.parse(sessionStorage.getItem('token'))
-  if (sessionInfo !== null) {
+  if (sessionInfo) {
+
     return { logged: true, userid: sessionInfo.user }
   }
   return { logged: false, userid: null }

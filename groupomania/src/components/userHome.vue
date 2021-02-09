@@ -12,12 +12,11 @@
         </div>
         <div class="media-body">
           <h3 class="m-0">{{ this.User.username }}</h3>
-          <p class="font-weight-light mb-0" v-if="this.User.position !== null">
+          <p class="font-weight-light mb-0" v-if="this.User.position">
             {{ this.User.position }}
           </p>
         </div>
       </div>
-      <!-- <button v-on:click="hidden = !hidden">Toggle hide and show</button> -->
     </div>
     <div class="card-body">
       <p class="card-text" v-if="this.User.description !== ''">

@@ -12,15 +12,15 @@
             <h4>
               {{ this.User.username }}
             </h4>
-            <h5 class="mt-1" v-show="this.User.position !== null">
+            <h5 class="mt-1" v-show="this.User.position">
               {{ this.User.position }}
             </h5>
-            <h6 class="mt-1" v-show="this.User.description !== null">
+            <h6 class="mt-1" v-show="this.User.description">
               {{ this.User.description }}
             </h6>
             <h6
               class="mt-1 font-weight-light font-italic"
-              v-show="this.User.description === null"
+              v-show="!this.User.description"
             >
               {{ defaultDescription }}
             </h6>
@@ -94,31 +94,31 @@
                       <p>{{ this.User.email }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.lastname !== null">
+                  <div class="row" v-if="this.User.lastname">
                     <div class="col-md-4"><label>Nom:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.lastname }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.firstname !== null">
+                  <div class="row" v-if="this.User.firstname">
                     <div class="col-md-4"><label>Prenom:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.firstname }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.position !== null">
+                  <div class="row" v-if="this.User.position">
                     <div class="col-md-4"><label>Post:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.position }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.birthday !== null">
+                  <div class="row" v-if="this.User.birthday">
                     <div class="col-md-4"><label>Anniversaire:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.birthday }}</p>
                     </div>
                   </div>
-                  <div class="row" v-if="this.User.description !== null">
+                  <div class="row" v-if="this.User.description">
                     <div class="col-md-4"><label>Description:</label></div>
                     <div class="col-md-8">
                       <p>
@@ -126,6 +126,12 @@
                       </p>
                     </div>
                   </div>
+                  <input
+                    type="submit"
+                    class="profile-edit-btn mt-4 mr-1"
+                    name="btnAddMore"
+                    value="supprimer compte"
+                  />
                 </div>
               </div>
             </div>

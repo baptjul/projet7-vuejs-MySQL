@@ -16,30 +16,31 @@ export default {
     },
   },
   actions: {
-    getUser({ commit }, id) {
-      return axios.get(`/auth/user/${id}`, { headers: headerAuth() })
+    getUser({ commit }, iduser) {
+      return axios.get(`/auth/user/${iduser}`, { headers: headerAuth() })
         .then((response) => {
           commit('setUser', response.data[0]);
         })
         .catch((error) => {
-          return Promise.reject(error);
+          return Promise.reject(error.response.data);
         });
     },
-    updateUser({ commit }, { id, data }) {
-      return axios.put(`auth/user/${id}`, data, { headers: headerAuth() })
+    updateUser({ commit }, object) {
+      console.log(object)
+      return axios.put(`auth/user/${object.iduser}`, object.body, { headers: headerAuth() })
         .then((response) => {
           console.log(response)
           commit('setUser', response.data[0]);
         })
         .catch((error) => {
-          return Promise.reject(error);
+          return Promise.reject(error.response.data);
         });
     },
-    deleteUser(id) {
-      return axios.delete(`/auth/${id}`, { headers: headerAuth() })
+    deleteUser(iduser) {
+      return axios.delete(`/auth/${iduser}`, { headers: headerAuth() })
         .then((response) => { Promise.resolve(response) })
         .catch((error) => {
-          return Promise.reject(error);
+          return Promise.reject(error.response.data);
         });
     },
   }

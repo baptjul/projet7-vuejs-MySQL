@@ -244,6 +244,13 @@
                     v-on:click="modify = !modify"
                     v-if="!modify"
                   />
+                  <input
+                    type="submit"
+                    class="profile-edit-btn mt-4 mr-1"
+                    name="btnAddMore"
+                    value="supprimer compte"
+                    v-if="!modify"
+                  />
                   <div class="d-flex">
                     <input
                       type="submit"
@@ -308,6 +315,7 @@ export default {
   methods: {
     ...mapActions({
       updateUser: "Users/updateUser",
+      getUser: "Users/getUser",
     }),
     autoResize(event) {
       event.target.style.height = "auto";
@@ -323,18 +331,19 @@ export default {
       let birthday = this.update.birthday;
       let description = this.update.description;
       const body = {
-        username,
         email,
-        lastname,
+        username,
         firstname,
+        lastname,
+        description,
         position,
         birthday,
-        description,
       };
       console.log(body);
       console.log(iduser);
-      this.updateUser(iduser, body)
+      this.updateUser({ iduser, body })
         .then(() => (this.modify = false))
+        .then(() => this.getUser(iduser))
         .catch((error) => console.log(error));
     },
   },

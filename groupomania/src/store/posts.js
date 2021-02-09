@@ -48,7 +48,7 @@ export default {
           return Promise.resolve(response.data);
         })
         .catch((error) => {
-          const message = error;
+          const message = error.response;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         })
@@ -60,7 +60,7 @@ export default {
           return Promise.resolve(response.data);
         })
         .catch((error) => {
-          const message = error;
+          const message = error.response;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         });
@@ -72,19 +72,20 @@ export default {
           return Promise.resolve(response.data);
         })
         .catch((error) => {
-          const message = error;
+          const message = error.response;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         })
     },
-    addPost({ commit }, data) {
-      return axios.post('/posts/', data, { headers: headerAuth() })
+    addPost({ commit }, body) {
+      return axios.post('/posts/', body, { headers: headerAuth() })
         .then((res) => {
           commit('CREATE_POST', res.data);
           return Promise.resolve(res.data);
         })
         .catch((error) => {
-          const message = error;
+          const message = error.response;
+          console.log(message)
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         });
@@ -95,18 +96,18 @@ export default {
           commit('ADD_LIKES', res.data);
         })
         .catch((error) => {
-          const message = error;
+          const message = error.response;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         });
     },
-    likeDislikePost({ commit }, idpost, data) {
-      return axios.post(`/posts/${idpost}/likePost`, data, { headers: headerAuth() })
+    likeDislikePost({ commit }, idpost, body) {
+      return axios.post(`/posts/${idpost}/likePost`, body, { headers: headerAuth() })
         .then((res) => {
           commit('LIKE', res.data);
         })
         .catch((error) => {
-          const message = error;
+          const message = error.response;
           commit('ERROR_MESSAGE', message)
           return Promise.reject(message);
         });

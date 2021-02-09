@@ -39,8 +39,8 @@ export default {
           return Promise.resolve(response.data);
         })
         .catch((error) => {
-          commit('ERROR_MESSAGE', error)
-          return Promise.reject(error);
+          commit('ERROR_MESSAGE', error.response.data)
+          return Promise.reject(error.response.data);
         })
     },
     deleteCom({ commit }, idcom) {
@@ -50,19 +50,19 @@ export default {
           return Promise.resolve(response.data);
         })
         .catch((error) => {
-          commit('ERROR_MESSAGE', error)
-          return Promise.reject(error);
+          commit('ERROR_MESSAGE', error.response.data)
+          return Promise.reject(error.response.data);
         });
     },
-    addCom({ commit }, data) {
-      return axios.post('/comments/', data, { headers: headerAuth() })
+    addCom({ commit }, body) {
+      return axios.post('/comments/', body, { headers: headerAuth() })
         .then((res) => {
           commit('CREATE_COM', res.data);
           return Promise.resolve(res.data);
         })
         .catch((error) => {
-          commit('ERROR_MESSAGE', error)
-          return Promise.reject(error);
+          commit('ERROR_MESSAGE', error.response.data)
+          return Promise.reject(error.response.data);
         });
     },
     likeDislikeCom({ commit }, idcom) {
@@ -71,8 +71,8 @@ export default {
           commit('LIKE', res.data);
         })
         .catch((error) => {
-          commit('ERROR_MESSAGE', error)
-          return Promise.reject(error);
+          commit('ERROR_MESSAGE', error.response.data)
+          return Promise.reject(error.response.data);
         });
     }
   }
