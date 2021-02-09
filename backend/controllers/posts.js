@@ -57,7 +57,7 @@ exports.deletePost = (req, res) => {
             return res.status(401).json(error, "database not connected !");
         } if (result[0].image_content !== null || '') {
             const filename = result[0].image_content.split('/images/posts/')[1];
-            fs.unlink(`images/${filename}`)
+            fs.unlink(`images/posts/${filename}`)
         }
         let sql = "DELETE FROM posts WHERE idposts = ?;"
         db.query(sql, value, (error, result) => {

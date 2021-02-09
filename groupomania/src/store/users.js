@@ -29,7 +29,7 @@ export default {
       console.log(object)
       return axios.put(`auth/user/${object.iduser}`, object.body, { headers: headerAuth() })
         .then((response) => {
-          console.log(response)
+          console.log(response.data[0])
           commit('setUser', response.data[0]);
         })
         .catch((error) => {

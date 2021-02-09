@@ -117,18 +117,23 @@ exports.updateProfilePicture = (req, res, next) => {
 
 exports.deleteUser = (req, res) => {
   const id = req.params.id
-  const image = req.imag_url
   let value = [id]
-  let sql = "DELETE FROM user WHERE iduser = ?;"
-  db.query(sql, value, (error, result) => {
+  let checkUser = "SELECT * FROM user WHERE iduser = ;"
+  db.query(checkUser, values, (error, result) => {
     if (error) {
-      return res.status(401).json("database not connected !");
-    } if (image !== null) {
-      const filename = result.imag_url.split('/images/posts/')[1];
-      fs.unlink(`images/${filename}`, () => {
-        return res.status(200).json(result);
-      })
+      return res.status(401).json(error);
     }
-    return res.status(200).json("User deleted");
+    if (result[0].profile_picture !== 'http://localhost:3000/images/user/icon.png') {
+      const filename = result[0].profile_picture.split('/images/user/')[1];
+      fs.unlink(`images/user/${filename}`)
+    }
+    let sql = "DELETE FROM posts WHERE idposts = ?;"
+    db.query(sql, value, (error, result) => {
+      if (error) {
+        return res.status(401).json(error);
+      }
+      console.log('message supprimé')
+      return res.status(200).json(result);
+    });
   });
 }

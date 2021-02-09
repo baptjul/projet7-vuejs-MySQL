@@ -40,7 +40,7 @@
                     @change="previewFiles($event)"
                   />
                 </div>
-                <div class="mt-2" v-if="files !== null">
+                <div class="mt-2" v-if="files">
                   <i class="fas fa-check"></i>
                 </div>
                 <button
@@ -48,7 +48,7 @@
                   type="button"
                   class="btn bg-transparent mt-2"
                   data-toggle="dropdown"
-                  v-if="files !== null"
+                  v-if="files"
                 >
                   <i class="fas fa-times" v-on:click.prevent="removeFile()"
                     ><p class="ml-2">retirer l'image</p></i
@@ -59,7 +59,7 @@
                   type="submit"
                   class="btn btn--light ml-auto"
                   @click="publishPost()"
-                  v-if="files !== null || content !== ''"
+                  v-if="files || content !== ''"
                 >
                   Poster
                 </button>
@@ -126,7 +126,7 @@ export default {
       let post = this.content;
       let iduser = this.iduser;
       let file = "";
-      if (this.files !== null) {
+      if (this.files) {
         file = this.files;
       }
       let body = { post, iduser, file };

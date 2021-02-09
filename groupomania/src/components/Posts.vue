@@ -259,7 +259,7 @@ export default {
 }
 .comArea {
   scrollbar-width: thin;
-  max-height: 275px;
+  max-height: 280px;
   overflow-y: scroll;
 }
 </style>

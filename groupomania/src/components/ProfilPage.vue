@@ -191,10 +191,10 @@
                   <div class="row mt-1 ml-5">
                     <div class="col-md-4"><label>Anniversaire:</label></div>
                     <div class="col-md-8" v-if="!modify">
-                      <div v-if="this.User.birthday !== null">
-                        <p>{{ this.User.birthday }}</p>
+                      <div v-if="this.User.birthday">
+                        <p>{{ splitDate(this.User.birthday, "T")[0] }}</p>
                       </div>
-                      <div v-if="this.User.birthday === null">
+                      <div v-if="!this.User.birthday">
                         <p class="font-weight-light font-italic text-muted">
                           {{ placeHolder }}
                         </p>
@@ -239,23 +239,24 @@
                   <input
                     type="submit"
                     class="profile-edit-btn mt-4 mr-1"
-                    name="btnAddMore"
-                    value="modifer"
+                    name="modifier"
+                    value="modifier"
                     v-on:click="modify = !modify"
                     v-if="!modify"
                   />
                   <input
                     type="submit"
                     class="profile-edit-btn mt-4 mr-1"
-                    name="btnAddMore"
+                    name="deleteUser"
                     value="supprimer compte"
                     v-if="!modify"
+                    v-on:click="delUser(this.iduser)"
                   />
                   <div class="d-flex">
                     <input
                       type="submit"
                       class="profile-edit-btn mt-4 mr-1"
-                      name="btnAddMore"
+                      name="return"
                       value="retour"
                       v-on:click="modify = !modify"
                       v-if="modify"
@@ -263,7 +264,7 @@
                     <input
                       type="submit"
                       class="profile-edit-btn mt-4 ml-1"
-                      name="btnAddMore"
+                      name="validation"
                       value="valider"
                       v-if="modify"
                       v-on:click.prevent="postUpdate()"
@@ -316,7 +317,13 @@ export default {
     ...mapActions({
       updateUser: "Users/updateUser",
       getUser: "Users/getUser",
+      deleteUser: "Users/deleteUser",
+      logout: "Auth/logout",
     }),
+    splitDate(date, separator) {
+      let customDate = date.split(separator);
+      return customDate;
+    },
     autoResize(event) {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
@@ -344,6 +351,13 @@ export default {
       this.updateUser({ iduser, body })
         .then(() => (this.modify = false))
         .then(() => this.getUser(iduser))
+        .catch((error) => console.log(error));
+    },
+    delUser(user) {
+      this.deleteUser(user)
+        .then(() => this.$router.push({ path: "/" }))
+        .then(() => this.logout())
+        .then(() => this.$router.push({ path: "/connexion" }))
         .catch((error) => console.log(error));
     },
   },

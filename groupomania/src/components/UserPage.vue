@@ -131,6 +131,8 @@
                     class="profile-edit-btn mt-4 mr-1"
                     name="btnAddMore"
                     value="supprimer compte"
+                    v-on:click="delUser(this.User.iduser)"
+                    v-if="isAdmin()"
                   />
                 </div>
               </div>
@@ -144,7 +146,8 @@
 
 <script>
 import Posts from "@/components/Posts.vue";
-import { mapGetters } from "vuex";
+import tokenInfo from "@/services/tokenInfo";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Profile",
@@ -160,7 +163,26 @@ export default {
     ...mapGetters({
       User: "Users/User",
       userPosts: "Posts/UserPosts",
+      iduser: "Auth/iduser",
     }),
+  },
+  methods: {
+    ...mapActions({
+      deleteUser: "Users/deleteUser",
+      logout: "Auth/logout",
+    }),
+    isAdmin() {
+      const isAdmin = tokenInfo().role;
+      if (isAdmin === "admin") {
+        return true;
+      }
+      return false;
+    },
+    delUser(user) {
+      this.deleteUser(user).then(() =>
+        this.$router.push({ path: "/" }).catch((error) => console.log(error))
+      );
+    },
   },
 };
 </script>
