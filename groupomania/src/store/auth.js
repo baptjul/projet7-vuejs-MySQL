@@ -1,4 +1,4 @@
-import axios from '@/main';
+import axios from '@/instanceHttp';
 
 function logged() {
   const sessionInfo = JSON.parse(sessionStorage.getItem('token'))

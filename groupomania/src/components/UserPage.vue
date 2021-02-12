@@ -65,14 +65,11 @@
               role="tabpanel"
               aria-labelledby="home-tab"
             >
-              <!-- ____________________________________________________________ -->
               <Posts
                 v-for="post in userPosts"
                 :key="post.idposts"
                 :post="post"
               />
-
-              <!-- ____________________________________________________________ -->
             </div>
             <div
               class="tab-pane fade"
@@ -169,7 +166,6 @@ export default {
   methods: {
     ...mapActions({
       deleteUser: "Users/deleteUser",
-      logout: "Auth/logout",
     }),
     isAdmin() {
       const isAdmin = tokenInfo().role;

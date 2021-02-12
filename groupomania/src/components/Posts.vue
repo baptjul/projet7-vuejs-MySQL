@@ -192,7 +192,7 @@ export default {
       const fullPost = { content, idposts, iduser };
       this.addCom(fullPost)
         .then(() => this.getCom(this.post.idposts))
-        .then(() => (document.getElementById("comment").value = ""))
+        .then(() => (this.content = ""))
         .then(() => this.getAllPosts())
         .catch((error) => console.log(error));
     },

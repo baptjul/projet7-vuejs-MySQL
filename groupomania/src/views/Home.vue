@@ -58,7 +58,7 @@
                 <button
                   type="submit"
                   class="btn btn--light ml-auto"
-                  @click="publishPost()"
+                  v-on:click.prevent="publishPost()"
                   v-if="files || content !== ''"
                 >
                   Poster
@@ -132,7 +132,7 @@ export default {
       let body = { post, iduser, file };
       this.addPost(body)
         .then(() => this.getAllPosts())
-        .then(() => (document.getElementById("post").value = ""))
+        .then(() => (this.content = ""))
         .catch((error) => console.log(error));
     },
   },

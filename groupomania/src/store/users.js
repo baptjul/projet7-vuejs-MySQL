@@ -1,4 +1,4 @@
-import axios from '@/main';
+import axios from '@/instanceHttp';
 import headerAuth from '@/services/headerAuth';
 
 export default {

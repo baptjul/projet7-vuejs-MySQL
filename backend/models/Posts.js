@@ -2,7 +2,7 @@ const joi = require('joi');
 
 const PostSchema = joi.object({
   post: joi.string()
-    .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/).allow(null, ''),
+    .pattern(new RegExp('^[a-zA-Z0-9_.,!?:-]{3,15}$$')).allow(null, ''),
   postPicture: joi.object({
     name: joi.string()
       .alphanum(),

@@ -21,7 +21,7 @@ export default {
       log: "Auth/loggedUser",
     }),
     logged() {
-      if (this.log !== false) {
+      if (this.log) {
         return true;
       }
       return false;
