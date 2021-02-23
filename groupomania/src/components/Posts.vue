@@ -223,13 +223,26 @@ export default {
       let likes = value;
       const body = { iduser, likes };
       const data = [idpost, body];
-      this.likeDislikePost(data);
+      this.likeDislikePost(data)
+        .then(() => this.getAllPosts())
+        .then(() => this.likesFetch());
     },
     likesFetch() {
       const idpost = this.post.idposts;
       const iduser = this.iduser;
       const data = { iduser, idpost };
       this.getLikes(data).catch((error) => console.log(error));
+    },
+    isliked() {
+      const call = this.Likes.filter(
+        (like) => like.posts_idposts === this.post.idposts
+      );
+      if (call[0] !== undefined && call[0].likes) {
+        return (this.like = true);
+      }
+      if (call[0] !== undefined && call[0].dislikes) {
+        return (this.dislike = true);
+      }
     },
     getComment() {
       this.getCom(this.post.idposts).catch((error) => console.log(error));
@@ -238,6 +251,7 @@ export default {
   mounted() {
     this.getComment();
     this.likesFetch();
+    this.isliked();
   },
 };
 </script>

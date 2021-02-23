@@ -28,10 +28,10 @@ export default {
     Iduser: (state) => state.user
   },
   mutations: {
-    SET_TOKEN(state, token, user) {
+    SET_TOKEN(state, object) {
       state.logged = true;
-      state.user = user;
-      state.token = token;
+      state.token = object.token;
+      state.user = object.user;
     },
     LOGOUT(state) {
       state.logged = false;
@@ -44,8 +44,12 @@ export default {
       return axios.post('/auth/login', credentials)
         .then((res) => {
           sessionStorage.setItem('token', JSON.stringify(res.data));
-          let tokenInfo = jwt_decode(sessionStorage.getItem('token')).iduser
-          commit('SET_TOKEN', res.data.token, tokenInfo);
+          let user = jwt_decode(sessionStorage.getItem('token')).iduser
+          let token = res.data.token
+          let userInfo = { token, user }
+          console.log(token, user)
+          commit('SET_TOKEN', userInfo);
+          console.log(this.state)
           return Promise.resolve(res.data);
         })
         .catch((error) => {
