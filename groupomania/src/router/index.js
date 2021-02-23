@@ -40,7 +40,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((route) => route.meta.auth)
   const publicPage = to.matched.some((route) => route.meta.pub)
-  const authed = store.getters['Auth/loggedUser'];
+  const authed = store.getters['Auth/LoggedUser'];
   if (authRequired && !authed) {
     next('/connexion')
   } if (publicPage && authed) {

@@ -61,7 +61,7 @@ export default {
     }),
     Disconnect() {
       this.logout();
-      this.$router.push({ path: "/connexion" });
+      //this.$router.push({ path: "/connexion" });
     },
   },
 };

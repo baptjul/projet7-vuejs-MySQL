@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      log: "Auth/loggedUser",
+      log: "Auth/LoggedUser",
     }),
     logged() {
       if (this.log) {

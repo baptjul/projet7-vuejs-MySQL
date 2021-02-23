@@ -2,13 +2,17 @@ const joi = require('joi');
 
 const PostSchema = joi.object({
   post: joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9_.,!?:-]{3,15}$$')).allow(null, ''),
-  postPicture: joi.object({
-    name: joi.string()
-      .alphanum(),
-    lastModified: joi.number(),
-    size: joi.number(),
-    type: joi.string().alphanum(),
+    .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/)
+    .allow(null, ''),
+  file: joi.object({
+    fieldname: joi.string(),
+    originalname: joi.string(),
+    encoding: joi.string(),
+    mimetype: joi.string(),
+    destination: joi.string(),
+    filename: joi.string(),
+    path: joi.string(),
+    size: joi.number()
   }).allow(null, ''),
   iduser: joi.number()
 }).unknown();

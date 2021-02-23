@@ -6,17 +6,12 @@
 
 <script>
 import UserProfile from "@/components/UserPage.vue";
-import { mapGetters, mapActions } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "User",
   components: {
     UserProfile,
-  },
-  computed: {
-    ...mapGetters({
-      iduser: "Auth/iduser",
-    }),
   },
   methods: {
     ...mapActions({

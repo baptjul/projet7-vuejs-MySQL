@@ -15,7 +15,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      iduser: "Auth/iduser",
+      iduser: "Auth/Iduser",
     }),
   },
   methods: {

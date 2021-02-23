@@ -7,12 +7,20 @@
         width="40"
         class="rounded-circle img-thumbnail mr-2 align-self-start"
       />
-      <router-link to="/profile"
-        ><h5 class="mr-2 pr-2 text-danger align-self-center">
-          {{ comment.username }}:
-        </h5>
-      </router-link>
-      <p>
+      <router-link
+        :to="`/profile/${comment.user_iduser}`"
+        v-if="comment.user_iduser !== this.iduser"
+      >
+        <h5 class="mr-2 pr-2 mt-2 text-danger align-self-center">
+          {{ comment.username }}
+        </h5></router-link
+      >
+      <router-link to="/profile" v-if="comment.user_iduser === this.iduser"
+        ><h5 class="mr-2 pr-2 mt-2 text-danger align-self-center">
+          {{ comment.username }}
+        </h5></router-link
+      >
+      <p class="mt-2">
         {{ comment.content }}
       </p>
       <div class="dropdown delete" v-if="canDelete(comment.user_iduser)">
@@ -45,12 +53,17 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import tokenInfo from "@/services/tokenInfo";
 
 export default {
   name: "Comments",
   props: ["comment"],
+  computed: {
+    ...mapGetters({
+      iduser: "Auth/Iduser",
+    }),
+  },
   methods: {
     ...mapActions({
       deleteCom: "Comments/deleteCom",
@@ -58,7 +71,7 @@ export default {
     }),
     canDelete(iduser) {
       let isAdmin = tokenInfo().role;
-      const user = JSON.parse(sessionStorage.getItem("token")).user;
+      const user = this.iduser;
       if (user === iduser || isAdmin === "admin") {
         return true;
       }

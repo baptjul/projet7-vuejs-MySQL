@@ -1,14 +1,17 @@
 import axios from '@/instanceHttp';
+import jwt_decode from "jwt-decode";
+import router from '@/router/index';
 
 function logged() {
-  const sessionInfo = JSON.parse(sessionStorage.getItem('token'))
+  const sessionInfo = sessionStorage.getItem('token')
   if (sessionInfo) {
-
-    return { logged: true, userid: sessionInfo.user }
+    const tokenInfo = jwt_decode(sessionInfo)
+    if (tokenInfo.iduser && tokenInfo.role) {
+      return { logged: true, userid: tokenInfo.iduser }
+    }
   }
   return { logged: false, userid: null }
 }
-
 
 export default {
   stateFactory: true,
@@ -19,10 +22,10 @@ export default {
     user: logged().userid
   },
   getters: {
-    loggedUser: state => {
+    LoggedUser: state => {
       return state.logged
     },
-    iduser: (state) => state.user
+    Iduser: (state) => state.user
   },
   mutations: {
     SET_TOKEN(state, token, user) {
@@ -37,13 +40,12 @@ export default {
     }
   },
   actions: {
-    login({ dispatch }, credentials) {
+    login({ commit }, credentials) {
       return axios.post('/auth/login', credentials)
         .then((res) => {
-          if (res.data.token) {
-            sessionStorage.setItem('token', JSON.stringify(res.data));
-          }
-          dispatch('attempt', res.data.token, res.data.user);
+          sessionStorage.setItem('token', JSON.stringify(res.data));
+          let tokenInfo = jwt_decode(sessionStorage.getItem('token')).iduser
+          commit('SET_TOKEN', res.data.token, tokenInfo);
           return Promise.resolve(res.data);
         })
         .catch((error) => {
@@ -51,27 +53,23 @@ export default {
           return Promise.reject(message);
         });
     },
-    signup({ dispatch }, credentials) {
+    signup({ commit }, credentials) {
       return axios.post('/auth/signup', credentials)
         .then((res) => {
-          if (res.data.token) {
-            sessionStorage.setItem('token', JSON.stringify(res.data));
-          }
-          dispatch('attempt', res.data.token, res.data.user);
+          sessionStorage.setItem('token', JSON.stringify(res.data));
+          let tokenId = jwt_decode(sessionStorage.getItem('token')).iduser
+          commit('SET_TOKEN', res.data.token, tokenId);
           return Promise.resolve(res.data);
         })
         .catch((error) => {
           const message = error.response.data;
           return Promise.reject(message);
         });
-    },
-    attempt({ commit }, token, user) {
-      commit('SET_TOKEN', token, user)
     },
     logout({ commit }) {
       sessionStorage.removeItem('token');
       commit('LOGOUT');
-      document.location.reload();
+      router.push({ path: "/connexion" });
     }
   }
 };

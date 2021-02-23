@@ -2,7 +2,7 @@ const joi = require('joi');
 
 const UserSchema = joi.object({
     username: joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,50}$'))
+        .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/)
         .alphanum()
         .min(3)
         .max(50),
@@ -10,17 +10,17 @@ const UserSchema = joi.object({
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'fr'] } })
         .required(),
     firstname: joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,255}$'))
+        .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/)
         .min(3)
         .max(255)
         .allow(null, ''),
     lastname: joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,255}$'))
+        .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/)
         .min(3)
         .max(255)
         .allow(null, ''),
     position: joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,255}$'))
+        .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/)
         .min(3)
         .max(255)
         .allow(null, ''),

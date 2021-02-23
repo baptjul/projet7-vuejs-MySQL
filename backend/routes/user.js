@@ -4,6 +4,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const joiValidate = require('../middleware/joiValidate');
+const multer = require('../middleware/multer-config-post');
 
 const { LogSchema } = require('../models/log');
 const { UserSchema } = require('../models/User');
@@ -20,8 +21,8 @@ const connexionLimiter = rateLimit({
 router.post('/signup', joiValidate(LogSchema), userCtrl.signup);
 router.post('/login', connexionLimiter, joiValidate(LogSchema), userCtrl.login);
 router.get('/user/:id', auth, userCtrl.getUser);
-//router.get('/search/:id', auth, userCtrl.searchUsers);
-router.put('/user/:id', joiValidate(UserSchema), auth, userCtrl.updateUser);
+router.put('/user/:id', multer, joiValidate(UserSchema), auth, userCtrl.updateUser);
+router.put('/user/:id/del', multer, joiValidate(UserSchema), auth, userCtrl.updateProfilePicture);
 router.delete('/:id', auth, userCtrl.deleteUser);
 
 

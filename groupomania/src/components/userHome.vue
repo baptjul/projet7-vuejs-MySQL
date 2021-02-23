@@ -19,10 +19,10 @@
       </div>
     </div>
     <div class="card-body">
-      <p class="card-text" v-if="this.User.description !== ''">
+      <p class="card-text" v-if="this.User.description">
         {{ this.User.description }}
       </p>
-      <p class="card-text" v-if="this.User.description === ''">
+      <p class="card-text" v-if="!this.User.description">
         {{ defaultDescription }}
       </p>
       <hr />

@@ -9,7 +9,7 @@ export default {
     comments: [],
   },
   getters: {
-    comment: (state) => state.comments,
+    Comment: (state) => state.comments,
     ErrorMessage: (state) => state.error,
   },
   mutations: {

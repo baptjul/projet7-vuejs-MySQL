@@ -11,7 +11,7 @@ const Token = (user, username, role) => {
   },
     process.env.TOKEN,
     { expiresIn: '48h' })
-  return { user, token }
+  return { token }
 }
 
 exports.signup = (req, res, next) => {
@@ -22,7 +22,7 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(data.password, 10)
       .then(hash => {
         let admin = 0;
-        let defaultPicture = `${req.protocol}://${req.get('host')}/images/user/user-3331257_960_720.png`;
+        let defaultPicture = `${req.protocol}://${req.get('host')}/images/user/icon.png`;
         let values = [data.username, defaultPicture, data.email, hash, admin];
         let sql = "INSERT INTO user (username, profile_picture, email, password, creation_date, admin) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP(), ?);"
         db.query(sql, values, (error, result) => {
@@ -93,18 +93,23 @@ exports.updateUser = (req, res, next) => {
   const id = req.params.id;
   let values = [email, username, firstname, lastname, description, position, birthday, id]
   let sql = "UPDATE user SET email= ?, username= ?, firstname= ?, lastname= ?, description= ?, position= ?, birthday= ? WHERE iduser = ?;"
+  let refresh = "SELECT * FROM user WHERE iduser = ?;"
   db.query(sql, values, (error, result) => {
     if (error) {
       return res.status(401).json(error);
     }
-    return res.status(200).json("User updated");
+    db.query(refresh, id, (error, result) => {
+      if (error) {
+        return res.status(401).json(error);
+      }
+      return res.status(200).json(result);
+    });
   });
 }
 
 exports.updateProfilePicture = (req, res, next) => {
-  const data = req.body.profile_picture
   const id = req.params.id;
-  data = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
+  const data = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
   let values = [data, id]
   let sql = "UPDATE user SET profile_picture= ? WHERE iduser = ?;"
   db.query(sql, values, (error, result) => {
@@ -118,16 +123,20 @@ exports.updateProfilePicture = (req, res, next) => {
 exports.deleteUser = (req, res) => {
   const id = req.params.id
   let value = [id]
-  let checkUser = "SELECT * FROM user WHERE iduser = ;"
-  db.query(checkUser, values, (error, result) => {
+  let checkUser = "SELECT * FROM user WHERE iduser = ?;"
+  let sql = "DELETE FROM user WHERE iduser = ?;"
+  db.query(checkUser, value, (error, result) => {
     if (error) {
       return res.status(401).json(error);
     }
     if (result[0].profile_picture !== 'http://localhost:3000/images/user/icon.png') {
       const filename = result[0].profile_picture.split('/images/user/')[1];
-      fs.unlink(`images/user/${filename}`)
+      fs.unlink(`images/user/${filename}`, (err) => {
+        if (err) {
+          console.log("failed to delete local image:" + err);
+        }
+      })
     }
-    let sql = "DELETE FROM posts WHERE idposts = ?;"
     db.query(sql, value, (error, result) => {
       if (error) {
         return res.status(401).json(error);

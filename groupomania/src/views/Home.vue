@@ -24,7 +24,7 @@
                 <img
                   id="preview"
                   class="w-50 mt-2"
-                  v-if="preview"
+                  v-if="files"
                   :src="preview"
                 />
               </div>
@@ -47,7 +47,6 @@
                   role="button"
                   type="button"
                   class="btn bg-transparent mt-2"
-                  data-toggle="dropdown"
                   v-if="files"
                 >
                   <i class="fas fa-times" v-on:click.prevent="removeFile()"
@@ -98,7 +97,7 @@ export default {
   computed: {
     ...mapGetters({
       Posts: "Posts/Posts",
-      iduser: "Auth/iduser",
+      IdUser: "Auth/Iduser",
     }),
   },
   methods: {
@@ -112,9 +111,9 @@ export default {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
-    previewFiles(e) {
+    previewFiles(event) {
       this.files = this.$refs.myFiles.files[0];
-      const target = e.target.files[0];
+      const target = event.target.files[0];
       this.preview = URL.createObjectURL(target);
       console.log(this.files);
     },
@@ -124,21 +123,25 @@ export default {
     },
     publishPost() {
       let post = this.content;
-      let iduser = this.iduser;
-      let file = "";
-      if (this.files) {
-        file = this.files;
-      }
-      let body = { post, iduser, file };
-      this.addPost(body)
+      let iduser = this.IdUser;
+      let file = this.files;
+      let form = new FormData();
+      form.append("post", post);
+      form.append("iduser", iduser);
+      form.append("image", file);
+      this.addPost(form)
         .then(() => this.getAllPosts())
-        .then(() => (this.content = ""))
+        .then(
+          () => (
+            (this.content = ""), (this.files = null), (this.preview = null)
+          )
+        )
         .catch((error) => console.log(error));
     },
   },
-  created() {
+  mounted() {
     this.getAllPosts();
-    this.getUser(JSON.parse(sessionStorage.getItem("token")).user);
+    this.getUser(this.IdUser);
     this.$nextTick(() => {
       this.$el.setAttribute("style", "height", `${this.$el.scrollHeight}px`);
     });

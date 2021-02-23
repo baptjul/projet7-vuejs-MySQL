@@ -13,10 +13,10 @@
           :to="`/profile/${post.user_iduser}`"
           v-if="post.user_iduser !== this.iduser"
         >
-          <h3 class="profil_link">{{ post.username }}</h3></router-link
+          <h3 class="profil_link mt-1">{{ post.username }}</h3></router-link
         >
         <router-link to="/profile" v-if="post.user_iduser === this.iduser"
-          ><h3 class="profil_link">{{ post.username }}</h3></router-link
+          ><h3 class="profil_link mt-1">{{ post.username }}</h3></router-link
         >
         <div class="ml-3 blockquote-footer">{{ timeSincePost }}</div>
         <!-- delete button -->
@@ -38,19 +38,27 @@
       </div>
     </div>
     <div class="card-body">
-      <div class="picturePost">
-        {{ post.image_content }}
-      </div>
+      <img
+        :src="post.image_content"
+        alt="post picture"
+        width="45"
+        class="ml-auto shadow-sm picturePost"
+        v-if="post.image_content"
+      />
       <p class="content">
         {{ post.text_content }}
       </p>
       <div class="d-flex vues">
-        <div class="vues__likes mr-2">
-          <a href="#"><i class="fas fa-heart"></i></a>
+        <div class="mr-2">
+          <a v-on:click.prevent="likes(1)"
+            ><i class="fas fa-heart" v-bind:class="filterLike"></i
+          ></a>
           <span class="mx-2">{{ post.Likes }}</span>
         </div>
-        <div class="vues__dislikes mr-2">
-          <a href="#"><i class="fas fa-heart-broken"></i></a>
+        <div class="mr-2">
+          <a v-on:click.prevent="likes(-1)"
+            ><i class="fas fa-heart-broken" v-bind:class="filterDislike"></i
+          ></a>
           <span class="mx-2">{{ post.Dislikes }}</span>
         </div>
         <div class="vues__comments ml-auto">
@@ -110,25 +118,38 @@ export default {
     return {
       show: false,
       content: "",
+      like: null,
+      dislike: null,
     };
   },
   computed: {
     ...mapGetters({
-      Comments: "Comments/comment",
-      iduser: "Auth/iduser",
+      Comments: "Comments/Comment",
+      iduser: "Auth/Iduser",
+      Likes: "Posts/Likes",
     }),
     filterCom() {
       return this.Comments.filter(
         (com) => com.posts_idposts === this.post.idposts
       );
     },
-    comments() {
-      console.log(
-        this.Comments.filter((item) => item.post_idpost === this.post.idposts)
+    filterLike() {
+      const call = this.Likes.filter(
+        (like) => like.posts_idposts === this.post.idposts
       );
-      return this.Comments.filter(
-        (item) => item.post_idpost === this.post.idposts
+      if (call[0] !== undefined && call[0].likes) {
+        return "active";
+      }
+      return "inactive";
+    },
+    filterDislike() {
+      const call = this.Likes.filter(
+        (like) => like.posts_idposts === this.post.idposts
       );
+      if (call[0] !== undefined && call[0].dislikes) {
+        return "active";
+      }
+      return "inactive";
     },
     timeSincePost() {
       const date = new Date();
@@ -164,14 +185,14 @@ export default {
     ...mapActions({
       deletePost: "Posts/deletePost",
       likeDislikePost: "Posts/likeDislikePost",
+      getLikes: "Posts/getLikes",
       addCom: "Comments/addCom",
       getCom: "Comments/getCom",
       getAllPosts: "Posts/getAllPosts",
     }),
-
     canDelete(iduser) {
       let isAdmin = tokenInfo().role;
-      const user = JSON.parse(sessionStorage.getItem("token")).user;
+      const user = this.iduser;
       if (user === iduser || isAdmin === "admin") {
         return true;
       }
@@ -196,15 +217,27 @@ export default {
         .then(() => this.getAllPosts())
         .catch((error) => console.log(error));
     },
-    likes() {
-      this.likeDislikePost(this.post.idposts);
+    likes(value) {
+      let idpost = this.post.idposts;
+      let iduser = this.iduser;
+      let likes = value;
+      const body = { iduser, likes };
+      const data = [idpost, body];
+      this.likeDislikePost(data);
+    },
+    likesFetch() {
+      const idpost = this.post.idposts;
+      const iduser = this.iduser;
+      const data = { iduser, idpost };
+      this.getLikes(data).catch((error) => console.log(error));
     },
     getComment() {
-      this.getCom(this.post.idposts);
+      this.getCom(this.post.idposts).catch((error) => console.log(error));
     },
   },
-  created() {
+  mounted() {
     this.getComment();
+    this.likesFetch();
   },
 };
 </script>
@@ -236,21 +269,28 @@ export default {
     color: #2c3e50;
   }
   .picturePost {
-    max-height: 300px;
-    width: auto;
+    min-width: 100%;
+    height: auto;
   }
 }
 .vues {
   font-size: 1.3rem;
-  i {
-    text-decoration: none;
-    color: #be2635c7;
-  }
   a {
     :hover {
       transform: rotate(360deg);
       transition: all 0.2s;
     }
+  }
+  .inactive {
+    text-decoration: none;
+    color: grey; //#be2635c7
+    &:hover {
+      color: #be2635c7;
+    }
+  }
+  .active {
+    text-decoration: none;
+    color: #be2635c7;
   }
 }
 .comment-title p {

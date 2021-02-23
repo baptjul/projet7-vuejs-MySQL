@@ -128,9 +128,30 @@
                     class="profile-edit-btn mt-4 mr-1"
                     name="btnAddMore"
                     value="supprimer compte"
-                    v-on:click="delUser(this.User.iduser)"
-                    v-if="isAdmin()"
+                    v-on:click="del = !del"
+                    v-if="isAdmin() && !del"
                   />
+                  <div class="d-flex align-items-center">
+                    <p v-if="del" class="mt-2">
+                      Etes-vous sur de vouloir supprimer le compte
+                    </p>
+                    <button
+                      type="submit"
+                      class="profile-edit-btn mr-1"
+                      v-on:click="del = !del"
+                      v-if="del"
+                    >
+                      retour
+                    </button>
+                    <button
+                      type="submit"
+                      class="profile-edit-btn ml-1"
+                      v-if="del"
+                      v-on:click="delUser(this.User.iduser)"
+                    >
+                      supprimer
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -153,6 +174,7 @@ export default {
   },
   data() {
     return {
+      del: false,
       defaultDescription: "L'utilisateur n'a pas encore de description",
     };
   },
@@ -160,7 +182,7 @@ export default {
     ...mapGetters({
       User: "Users/User",
       userPosts: "Posts/UserPosts",
-      iduser: "Auth/iduser",
+      iduser: "Auth/Iduser",
     }),
   },
   methods: {
@@ -179,6 +201,9 @@ export default {
         this.$router.push({ path: "/" }).catch((error) => console.log(error))
       );
     },
+  },
+  mounted() {
+    console.log(this.User.iduser);
   },
 };
 </script>
