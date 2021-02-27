@@ -1,5 +1,6 @@
 import axios from '@/instanceHttp';
 import headerAuth from '@/services/headerAuth';
+import router from '@/router/index';
 
 export default {
   stateFactory: true,
@@ -14,6 +15,9 @@ export default {
     setUser(state, user) {
       state.user = user;
     },
+    REMOVE_USER(state) {
+      state.user = []
+    }
   },
   actions: {
     getUser({ commit }, iduser) {
@@ -36,9 +40,23 @@ export default {
           return Promise.reject(error.response.data);
         });
     },
-    deleteUser(iduser) {
-      return axios.delete(`/auth/user/${iduser}/del`, { headers: headerAuth() })
-        .then((response) => { Promise.resolve(response) })
+    updatePicture(data) {
+      return axios.put(`/auth/user/${data.iduser}/picture`, data.body, { headers: headerAuth() })
+        .then((response) => {
+          //commit('setUser', response.data[0]);
+          Promise.resolve(response)
+        })
+        .catch((error) => {
+          return Promise.reject(error.response.data);
+        });
+    },
+    deleteUser({ commit }, iduser) {
+      return axios.delete(`/auth/${iduser}`, { headers: headerAuth() })
+        .then((response) => {
+          commit('REMOVE_USER')
+          router.push({ path: "/" });
+          Promise.resolve(response)
+        })
         .catch((error) => {
           return Promise.reject(error.response.data);
         });

@@ -118,8 +118,6 @@ export default {
     return {
       show: false,
       content: "",
-      like: null,
-      dislike: null,
     };
   },
   computed: {
@@ -186,6 +184,7 @@ export default {
       deletePost: "Posts/deletePost",
       likeDislikePost: "Posts/likeDislikePost",
       getLikes: "Posts/getLikes",
+      getUserPost: "Posts/getUserPost",
       addCom: "Comments/addCom",
       getCom: "Comments/getCom",
       getAllPosts: "Posts/getAllPosts",
@@ -225,6 +224,7 @@ export default {
       const data = [idpost, body];
       this.likeDislikePost(data)
         .then(() => this.getAllPosts())
+        .then(() => this.getUserPost(this.iduser))
         .then(() => this.likesFetch());
     },
     likesFetch() {
@@ -233,17 +233,6 @@ export default {
       const data = { iduser, idpost };
       this.getLikes(data).catch((error) => console.log(error));
     },
-    isliked() {
-      const call = this.Likes.filter(
-        (like) => like.posts_idposts === this.post.idposts
-      );
-      if (call[0] !== undefined && call[0].likes) {
-        return (this.like = true);
-      }
-      if (call[0] !== undefined && call[0].dislikes) {
-        return (this.dislike = true);
-      }
-    },
     getComment() {
       this.getCom(this.post.idposts).catch((error) => console.log(error));
     },
@@ -251,7 +240,6 @@ export default {
   mounted() {
     this.getComment();
     this.likesFetch();
-    this.isliked();
   },
 };
 </script>

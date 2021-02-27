@@ -1,8 +1,8 @@
 const db = require('../dbconfig');
 
 exports.getComments = (req, res, next) => {
-    let id = [req.params.id]
-    let sql = `SELECT idcomments, content, time_comment, posts_idposts, user_iduser, iduser, username, profile_picture
+    const id = [req.params.id]
+    const sql = `SELECT idcomments, content, time_comment, posts_idposts, user_iduser, iduser, username, profile_picture
     FROM comments INNER JOIN user ON iduser = comments.user_iduser WHERE comments.posts_idposts = ? ORDER BY time_comment DESC;`
     db.query(sql, id, (error, result) => {
         if (error) {
@@ -13,9 +13,9 @@ exports.getComments = (req, res, next) => {
 };
 
 exports.createComment = (req, res, next) => {
-    let data = req.body
-    let values = [data.content, data.idposts, data.iduser]
-    let sql = "INSERT INTO comments (content, time_comment, posts_idposts, user_iduser) VALUES (?, CURRENT_TIMESTAMP(), ?, ?);"
+    const data = req.body
+    const values = [data.content, data.idposts, data.iduser]
+    const sql = "INSERT INTO comments (content, time_comment, posts_idposts, user_iduser) VALUES (?, CURRENT_TIMESTAMP(), ?, ?);"
     db.query(sql, values, (error, result) => {
         if (error) {
             return res.status(400).json(error)
@@ -25,62 +25,12 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, nect) => {
-    let value = req.params.id
-    let sql = "DELETE FROM comments WHERE idcomments = ?;"
+    const value = req.params.id
+    const sql = "DELETE FROM comments WHERE idcomments = ?;"
     db.query(sql, value, (error, result) => {
         if (error) {
             return res.status(401).json(error);
         }
         return res.status(200).json(result);
     });
-}
-
-
-exports.likeAndDislikeComments = (req, res, next) => {
-    const commentid = req.body.idcomments;
-    const userid = req.body.iduser;
-    const data = [commentid, userid]
-    const dataRemoved = [0, commentid, userid]
-    const dataAdded = [1, commentid, userid]
-    switch (req.body.like) {
-        case 0:
-            let sql = "SELECT * FROM likes WHERE likes.comments_idcomments = ? AND likes.user_iduser = ? ;"
-            db.query(sql, data, (error, result) => {
-                if (error) {
-                    return res.status(401).json(error);
-                }
-                if (result.like === 1 && result.dislike === 0) {
-                    let connection = "UPDATE likes SET likes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
-                    db.query(connection, dataRemoved, (error, result) => {
-                        return res.status(200).json(result);
-                    })
-                } else if (result.dislike === 1 && result.like === 0) {
-                    let connection = "UPDATE likes SET dislikes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
-                    db.query(connection, dataRemoved, (error, result) => {
-                        return res.status(200).json(result);
-                    })
-                }
-            })
-            break;
-        case 1:
-            let updateLike = "UPDATE likes SET likes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
-            db.query(updateLike, dataAdded, (error, result) => {
-                if (error) {
-                    return res.status(401).json(error);
-                }
-                return res.status(200).json(result);
-            });
-            break;
-        case -1:
-            let updateDislike = "UPDATE likes SET dislikes = ? WHERE likes.comments_idcomments = ? AND likes.user_iduser = ?;"
-            db.query(updateDislike, dataAdded, (error, result) => {
-                if (error) {
-                    return res.status(401).json("database not connected !");
-                }
-                return res.status(200).json(result);
-            });
-            break;
-        default:
-            throw { error: "failed operation" };
-    }
 }

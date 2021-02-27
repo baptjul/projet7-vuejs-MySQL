@@ -70,6 +70,9 @@
                 :key="post.idposts"
                 :post="post"
               />
+              <div v-if="userPosts.length === 0" class="mt-4">
+                <p>L'utilisateur pas encore de post</p>
+              </div>
             </div>
             <div
               class="tab-pane fade"
@@ -83,12 +86,6 @@
                     <div class="col-md-4"><label>Pseudo:</label></div>
                     <div class="col-md-8">
                       <p>{{ this.User.username }}</p>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-4"><label>Email:</label></div>
-                    <div class="col-md-8">
-                      <p>{{ this.User.email }}</p>
                     </div>
                   </div>
                   <div class="row" v-if="this.User.lastname">
@@ -112,7 +109,7 @@
                   <div class="row" v-if="this.User.birthday">
                     <div class="col-md-4"><label>Anniversaire:</label></div>
                     <div class="col-md-8">
-                      <p>{{ this.User.birthday }}</p>
+                      <p>{{ splitDate()[0] }}</p>
                     </div>
                   </div>
                   <div class="row" v-if="this.User.description">
@@ -147,7 +144,7 @@
                       type="submit"
                       class="profile-edit-btn ml-1"
                       v-if="del"
-                      v-on:click="delUser(this.User.iduser)"
+                      v-on:click.prevent="delUser()"
                     >
                       supprimer
                     </button>
@@ -196,14 +193,16 @@ export default {
       }
       return false;
     },
-    delUser(user) {
-      this.deleteUser(user).then(() =>
-        this.$router.push({ path: "/" }).catch((error) => console.log(error))
-      );
+    delUser() {
+      this.deleteUser(this.User.iduser).catch((error) => console.log(error));
+    },
+    splitDate() {
+      let customDate = this.User.birthday.split("T");
+      return customDate;
     },
   },
   mounted() {
-    console.log(this.User.iduser);
+    console.log(this.userPosts);
   },
 };
 </script>

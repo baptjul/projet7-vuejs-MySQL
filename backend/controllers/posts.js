@@ -2,8 +2,8 @@ const fs = require('fs');
 const db = require('../dbconfig');
 
 exports.createPost = (req, res, next) => {
-    let data = req.body
-    let postPicture = '';
+    const data = req.body
+    const postPicture = '';
     console.log(data)
     console.log(req.file)
     if (req.file) {
@@ -11,8 +11,8 @@ exports.createPost = (req, res, next) => {
     } else {
         postPicture = null
     }
-    let values = [data.post, postPicture, data.iduser]
-    let sql = "INSERT INTO posts (text_content, image_content, time_post, user_iduser) VALUES (?, ?, CURRENT_TIMESTAMP(), ?);"
+    const values = [data.post, postPicture, data.iduser]
+    const sql = "INSERT INTO posts (text_content, image_content, time_post, user_iduser) VALUES (?, ?, CURRENT_TIMESTAMP(), ?);"
     db.query(sql, values, (error, result) => {
         if (error) {
             return res.status(400).json(error)
@@ -22,7 +22,7 @@ exports.createPost = (req, res, next) => {
 };
 
 exports.getPost = (req, res, next) => {
-    let sql = `SELECT idposts, text_content, image_content, time_post, user_iduser, iduser, username, profile_picture,
+    const sql = `SELECT idposts, text_content, image_content, time_post, user_iduser, iduser, username, profile_picture,
     (SELECT COUNT(likes) AS postLikes FROM likes WHERE likes.posts_idposts = idposts) Likes,
     (SELECT COUNT(dislikes) AS postDisLikes FROM likes WHERE likes.posts_idposts = idposts) Dislikes,
     (SELECT COUNT(idcomments) AS NbComments FROM comments WHERE comments.posts_idposts = idposts) Comments
@@ -36,8 +36,8 @@ exports.getPost = (req, res, next) => {
 };
 
 exports.getUserPost = (req, res, next) => {
-    let id = [req.params.id]
-    let sql = `SELECT idposts, text_content, image_content, time_post, user_iduser, iduser, username, profile_picture,
+    const id = [req.params.id]
+    const sql = `SELECT idposts, text_content, image_content, time_post, user_iduser, iduser, username, profile_picture,
     (SELECT COUNT(likes) AS postLikes FROM likes WHERE likes.posts_idposts = idposts) Likes,
     (SELECT COUNT(dislikes) AS postDisLikes FROM likes WHERE likes.posts_idposts = idposts) Dislikes,
     (SELECT COUNT(idcomments) AS NbComments FROM comments WHERE comments.posts_idposts = idposts) Comments
@@ -52,9 +52,9 @@ exports.getUserPost = (req, res, next) => {
 
 exports.deletePost = (req, res) => {
     const id = req.params.id
-    let value = [id]
-    let checkPost = "SELECT idposts, image_content FROM posts WHERE idposts = ?"
-    let sql = "DELETE FROM posts WHERE idposts = ?;"
+    const value = [id]
+    const checkPost = "SELECT idposts, image_content FROM posts WHERE idposts = ?"
+    const sql = "DELETE FROM posts WHERE idposts = ?;"
     db.query(checkPost, value, (error, result) => {
         if (error) {
             return res.status(401).json(error, "database not connected !");
@@ -79,8 +79,8 @@ exports.deletePost = (req, res) => {
 exports.likeOnPost = (req, res, next) => {
     const iduser = req.params.iduser
     const idpost = req.params.idpost
-    let value = [idpost, iduser]
-    let sql = `SELECT * FROM likes WHERE likes.posts_idposts = ? AND likes.user_iduser = ?`
+    const value = [idpost, iduser]
+    const sql = `SELECT * FROM likes WHERE likes.posts_idposts = ? AND likes.user_iduser = ?`
     db.query(sql, value, (error, result) => {
         if (error) {
             return res.status(400).json(error)
@@ -93,13 +93,31 @@ exports.likeAndDislikePosts = (req, res, next) => {
     const postid = req.params.id
     const userid = req.body.iduser;
     const like = req.body.likes
-    const data = [like, userid, postid]
-    let sql = `CALL likeAction(?, ?, ?)`
-    db.query(sql, data, (error, result) => {
+    const chackData = [postid, userid]
+    const check = `SELECT * FROM likes WHERE likes.posts_idposts = ? AND likes.user_iduser = ?`
+    const postData = [like, userid, postid]
+    const modification = `CALL likeModification(?, ?, ?)`
+    const defaultAction = `CALL likeDefault(?, ?, ?)`
+    db.query(check, chackData, (error, result) => {
         if (error) {
             return res.status(400).json(error)
         }
-        console.log('like action')
-        return res.status(200).json(result);
+        if (result.length !== 0) {
+            db.query(modification, postData, (error, result) => {
+                if (error) {
+                    return res.status(400).json(error)
+                }
+                console.log('like modify')
+                return res.status(200).json(result);
+            })
+        } else {
+            db.query(defaultAction, postData, (error, result) => {
+                if (error) {
+                    return res.status(400).json(error)
+                }
+                console.log('liked')
+                return res.status(200).json(result);
+            })
+        }
     })
 };

@@ -21,12 +21,11 @@ export default {
   methods: {
     ...mapActions({
       getUserPost: "Posts/getUserPost",
-      getUser: "Users/getUser",
     }),
   },
   mounted() {
     this.getUserPost(this.iduser);
-    this.getUser(this.iduser);
+    console.log(this.iduser);
   },
 };
 </script>

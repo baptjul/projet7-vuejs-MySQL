@@ -29,7 +29,11 @@ export default {
       }
     },
     ADD_LIKES(state, newLikes) {
+      state.likes = state.likes.filter(like => like.posts_idposts !== newLikes.posts_idposts)
       state.likes.push(newLikes)
+    },
+    REMOVE_LIKE(state, idpost) {
+      state.likes = state.likes.filter(like => like.posts_idposts !== idpost)
     },
     ERROR_MESSAGE(state, message) {
       state.error = message
@@ -92,7 +96,7 @@ export default {
         });
     },
     getLikes({ commit }, data) {
-      return axios.get(`/posts/${data.iduser}/${data.idpost}/likePost`)//, { headers: headerAuth() })
+      return axios.get(`/posts/${data.iduser}/${data.idpost}/likePost`)
         .then((response) => {
           if (response.data[0]) {
             commit('LIKE', response.data[0]);
@@ -105,11 +109,15 @@ export default {
           return Promise.reject(error);
         });
     },
-    likeDislikePost({ commit }, data) {
+    likeDislikePost({ commit, }, data) {
       return axios.post(`/posts/${data[0]}/likePost`, data[1], { headers: headerAuth() })
         .then((response) => {
-          commit('ADD_LIKES', response.data);
-          return Promise.resolve(response.data);
+          if (response.data[0][0] !== undefined) {
+            commit('ADD_LIKES', response.data[0][0]);
+          } else {
+            commit('REMOVE_LIKE', data[0]);
+          }
+          return Promise.resolve(response.data)
         })
         .catch((error) => {
           const message = error.response;

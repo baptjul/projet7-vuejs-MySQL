@@ -21,9 +21,8 @@ const connexionLimiter = rateLimit({
 router.post('/signup', joiValidate(LogSchema), userCtrl.signup);
 router.post('/login', connexionLimiter, joiValidate(LogSchema), userCtrl.login);
 router.get('/user/:id', auth, userCtrl.getUser);
-router.put('/user/:id', multer, joiValidate(UserSchema), auth, userCtrl.updateUser);
-router.put('/user/:id/del', multer, joiValidate(UserSchema), auth, userCtrl.updateProfilePicture);
+router.put('/user/:id', joiValidate(UserSchema), auth, userCtrl.updateUser);
+router.put('/user/:id/picture', multer, joiValidate(UserSchema), auth, userCtrl.updateProfilePicture);
 router.delete('/:id', auth, userCtrl.deleteUser);
-
 
 module.exports = router

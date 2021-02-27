@@ -69,6 +69,9 @@
             aria-labelledby="home-tab"
           >
             <Posts v-for="post in userPosts" :key="post.idposts" :post="post" />
+            <div v-if="userPosts.length === 0" class="mt-4">
+              <p>Vous n'avez pas encore de post</p>
+            </div>
           </div>
           <div
             class="tab-pane fade"
@@ -187,7 +190,7 @@
                   <div class="col-md-4"><label>Anniversaire:</label></div>
                   <div class="col-md-8" v-if="!modify">
                     <div v-if="this.User.birthday">
-                      <p>{{ splitDate(this.User.birthday, "T")[0] }}</p>
+                      <p>{{ splitDate()[0] }}</p>
                     </div>
                     <div v-if="!this.User.birthday">
                       <p class="font-weight-light font-italic text-muted">
@@ -336,8 +339,8 @@ export default {
       deleteUser: "Users/deleteUser",
       logout: "Auth/logout",
     }),
-    splitDate(date, separator) {
-      let customDate = date.split(separator);
+    splitDate() {
+      let customDate = this.User.birthday.split("T");
       return customDate;
     },
     autoResize(event) {
@@ -374,13 +377,15 @@ export default {
     },
   },
   mounted() {
-    this.update.username = this.User.username;
-    this.update.email = this.User.email;
-    this.update.lastname = this.User.lastname;
-    this.update.firstname = this.User.firstname;
-    this.update.position = this.User.position;
-    this.update.birthday = this.User.birthday;
-    this.update.description = this.User.description;
+    this.getUser(this.iduser).then(() => {
+      this.update.username = this.User.username;
+      this.update.email = this.User.email;
+      this.update.lastname = this.User.lastname;
+      this.update.firstname = this.User.firstname;
+      this.update.position = this.User.position;
+      this.update.birthday = this.splitDate()[0];
+      this.update.description = this.User.description;
+    });
   },
 };
 </script>

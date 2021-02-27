@@ -2,7 +2,6 @@ const joi = require('joi');
 
 const PostSchema = joi.object({
   post: joi.string()
-    .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/)
     .allow(null, ''),
   file: joi.object({
     fieldname: joi.string(),

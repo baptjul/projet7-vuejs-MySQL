@@ -11,7 +11,6 @@ const comCtrl = require('../controllers/comments')
 
 router.get('/:id', auth, comCtrl.getComments);
 router.post('/', auth, joiValidate(CommentSchema), comCtrl.createComment);
-router.post('/:id/likeCom', auth, comCtrl.likeAndDislikeComments)
 router.delete('/:id', auth, comCtrl.deleteComment);
 
 module.exports = router;

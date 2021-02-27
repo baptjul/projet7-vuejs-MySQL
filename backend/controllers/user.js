@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../dbconfig');
+const fs = require('fs');
 const passwordScheme = require('../models/Passwords');
 
 const Token = (user, username, role) => {
@@ -15,7 +16,7 @@ const Token = (user, username, role) => {
 }
 
 exports.signup = (req, res, next) => {
-  let data = req.body
+  const data = req.body
   if (!passwordScheme.validate(data.password)) {
     throw { error: "invalid password" }
   } else {
@@ -23,8 +24,8 @@ exports.signup = (req, res, next) => {
       .then(hash => {
         let admin = 0;
         let defaultPicture = `${req.protocol}://${req.get('host')}/images/user/icon.png`;
-        let values = [data.username, defaultPicture, data.email, hash, admin];
-        let sql = "INSERT INTO user (username, profile_picture, email, password, creation_date, admin) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP(), ?);"
+        const values = [data.username, defaultPicture, data.email, hash, admin];
+        const sql = "INSERT INTO user (username, profile_picture, email, password, creation_date, admin) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP(), ?);"
         db.query(sql, values, (error, result) => {
           if (error) {
             return res.status(400).json(error)
@@ -39,8 +40,8 @@ exports.signup = (req, res, next) => {
 
 exports.login = (req, res, next) => {
   let role = '';
-  let email = [req.body.email];
-  let sql = "SELECT iduser, username, email, password, admin FROM user WHERE email = ?;"
+  const email = [req.body.email];
+  const sql = "SELECT iduser, username, email, password, admin FROM user WHERE email = ?;"
   db.query(sql, email, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
@@ -67,19 +68,8 @@ exports.login = (req, res, next) => {
 };
 
 exports.getUser = (req, res, next) => {
-  let value = [req.params.id]
-  let sql = "SELECT * FROM user WHERE iduser = ?;"
-  db.query(sql, value, (error, result) => {
-    if (error) {
-      return res.status(401).json("database not connected !");
-    }
-    return res.status(200).json(result);
-  });
-}
-
-exports.searchUsers = (req, res, next) => {
-  let value = [req.body]
-  let sql = "SELECT username, firstname, lastname FROM user WHERE ? LIKE '% ? %';"
+  const value = [req.params.id]
+  const sql = "SELECT * FROM user WHERE iduser = ?;"
   db.query(sql, value, (error, result) => {
     if (error) {
       return res.status(401).json("database not connected !");
@@ -91,9 +81,9 @@ exports.searchUsers = (req, res, next) => {
 exports.updateUser = (req, res, next) => {
   const { email, username, firstname, lastname, description, position, birthday } = req.body;
   const id = req.params.id;
-  let values = [email, username, firstname, lastname, description, position, birthday, id]
-  let sql = "UPDATE user SET email= ?, username= ?, firstname= ?, lastname= ?, description= ?, position= ?, birthday= ? WHERE iduser = ?;"
-  let refresh = "SELECT * FROM user WHERE iduser = ?;"
+  const values = [email, username, firstname, lastname, description, position, birthday, id]
+  const sql = "UPDATE user SET email= ?, username= ?, firstname= ?, lastname= ?, description= ?, position= ?, birthday= ? WHERE iduser = ?;"
+  const refresh = "SELECT * FROM user WHERE iduser = ?;"
   db.query(sql, values, (error, result) => {
     if (error) {
       return res.status(401).json(error);
@@ -110,8 +100,8 @@ exports.updateUser = (req, res, next) => {
 exports.updateProfilePicture = (req, res, next) => {
   const id = req.params.id;
   const data = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
-  let values = [data, id]
-  let sql = "UPDATE user SET profile_picture= ? WHERE iduser = ?;"
+  const values = [data, id]
+  const sql = "UPDATE user SET profile_picture= ? WHERE iduser = ?;"
   db.query(sql, values, (error, result) => {
     if (error) {
       return res.status(401).json(error);
@@ -122,9 +112,9 @@ exports.updateProfilePicture = (req, res, next) => {
 
 exports.deleteUser = (req, res) => {
   const id = req.params.id
-  let value = [id]
-  let checkUser = "SELECT * FROM user WHERE iduser = ?;"
-  let sql = "DELETE FROM user WHERE iduser = ?;"
+  const value = [id]
+  const checkUser = "SELECT * FROM user WHERE iduser = ?;"
+  const sql = "DELETE FROM user WHERE iduser = ?;"
   db.query(checkUser, value, (error, result) => {
     if (error) {
       return res.status(401).json(error);
