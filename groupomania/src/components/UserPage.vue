@@ -201,9 +201,6 @@ export default {
       return customDate;
     },
   },
-  mounted() {
-    console.log(this.userPosts);
-  },
 };
 </script>
 

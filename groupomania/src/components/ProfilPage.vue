@@ -365,15 +365,13 @@ export default {
         position,
         birthday,
       };
-      console.log(body);
-      console.log(iduser);
       this.updateUser({ iduser, body })
         .then(() => (this.modify = false))
         .then(() => this.getUser(iduser))
         .catch((error) => console.log(error));
     },
-    delUser(user) {
-      this.deleteUser(user).catch((error) => console.log(error));
+    delUser() {
+      this.deleteUser(this.User.iduser).catch((error) => console.log(error));
     },
   },
   mounted() {

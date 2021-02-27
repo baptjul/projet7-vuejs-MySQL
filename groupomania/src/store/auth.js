@@ -25,6 +25,7 @@ export default {
     LoggedUser: state => {
       return state.logged
     },
+    Token: (state) => state.token,
     Iduser: (state) => state.user
   },
   mutations: {
@@ -47,9 +48,7 @@ export default {
           let user = jwt_decode(sessionStorage.getItem('token')).iduser
           let token = res.data.token
           let userInfo = { token, user }
-          console.log(token, user)
           commit('SET_TOKEN', userInfo);
-          console.log(this.state)
           return Promise.resolve(res.data);
         })
         .catch((error) => {

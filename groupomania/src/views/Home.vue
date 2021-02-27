@@ -115,7 +115,6 @@ export default {
       this.files = this.$refs.myFiles.files[0];
       const target = event.target.files[0];
       this.preview = URL.createObjectURL(target);
-      console.log(this.files);
     },
     removeFile() {
       this.files = null;

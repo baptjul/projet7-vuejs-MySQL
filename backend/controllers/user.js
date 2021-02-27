@@ -58,7 +58,6 @@ exports.login = (req, res, next) => {
           role = 'user'
         }
         console.log("user logged")
-        console.log(role)
         return res.status(200).json(
           Token(result[0].iduser, result[0].username, role)
         );

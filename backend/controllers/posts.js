@@ -4,8 +4,6 @@ const db = require('../dbconfig');
 exports.createPost = (req, res, next) => {
     const data = req.body
     const postPicture = '';
-    console.log(data)
-    console.log(req.file)
     if (req.file) {
         postPicture = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
     } else {

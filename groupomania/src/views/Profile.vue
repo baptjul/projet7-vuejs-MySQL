@@ -25,7 +25,6 @@ export default {
   },
   mounted() {
     this.getUserPost(this.iduser);
-    console.log(this.iduser);
   },
 };
 </script>
