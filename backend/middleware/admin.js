@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.TOKEN);
     const admin = decodedToken.admin;
-    if (admin == 0) {
+    if (admin === 0) {
       throw 'Invalid use';
     }
     else {

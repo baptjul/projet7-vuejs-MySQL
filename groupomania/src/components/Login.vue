@@ -166,16 +166,21 @@ export default {
     },
     Signup() {
       if (this.sign.password === this.sign.confirmedPass) {
-        let username = this.sign.username;
-        let email = this.sign.email;
-        let password = this.sign.password;
-        const user = { username, email, password };
+        const user = {
+          username: this.sign.username,
+          email: this.sign.email,
+          password: this.sign.password,
+        };
         this.signup(user)
           .then(() => {
             this.$router.push({ path: "/" });
           })
           .catch((error) => {
-            this.sign.errors = error;
+            if (error.code === "ER_DUP_ENTRY") {
+              this.sign.errors = "Ce pseudo existe déjà";
+            } else {
+              this.sign.errors = error;
+            }
           });
       } else {
         this.sign.errors = "Confirmation incorrect";

@@ -32,17 +32,6 @@
           </router-link>
         </li>
       </ul>
-      <!--<form class="form-inline my-2 my-lg-0">
-        <input
-          class="form-control mr-sm-2"
-          type="search"
-          placeholder="Search User"
-          aria-label="Search"
-        />
-        <button class="btn btn-danger mr-4 my-md-0" type="submit">
-          Search
-        </button>
-      </form>-->
       <button class="disconnect mt-3 mt-lg-0" @click.prevent="Disconnect">
         Déconnexion
       </button>
@@ -61,7 +50,6 @@ export default {
     }),
     Disconnect() {
       this.logout();
-      //this.$router.push({ path: "/connexion" });
     },
   },
 };

@@ -7,7 +7,7 @@
           :src="post.profile_picture"
           alt="profil picture"
           width="45"
-          class="mr-3 rounded-circle img-thumbnail shadow-sm"
+          class="mr-3 rounded-circle shadow-lg"
         />
         <router-link
           :to="`/profile/${post.user_iduser}`"
@@ -30,7 +30,7 @@
             <i class="fas fa-ellipsis-v white"></i>
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" v-on:click.prevent="delPost()"
+            <a href="#" class="dropdown-item" v-on:click.prevent="delPost()"
               >supprimer</a
             >
           </div>
@@ -45,7 +45,7 @@
         class="ml-auto shadow-sm picturePost"
         v-if="post.image_content"
       />
-      <p class="content">
+      <p class="content mt-2">
         {{ post.text_content }}
       </p>
       <div class="d-flex vues">
@@ -151,12 +151,11 @@ export default {
     },
     timeSincePost() {
       const date = new Date();
-      let postDate = new Date(this.post.time_post);
+      const postDate = new Date(this.post.time_post);
 
-      let seconds = Math.floor((date - postDate) / 1000);
+      const seconds = Math.floor((date - postDate) / 1000);
 
       let interval = seconds / 31536000;
-
       if (interval > 1) {
         return "il y a " + Math.floor(interval) + " ans";
       }
@@ -206,10 +205,11 @@ export default {
       this.deletePost(this.post.idposts);
     },
     createCom() {
-      let content = this.content;
-      let idposts = this.post.idposts;
-      let iduser = this.iduser;
-      const fullPost = { content, idposts, iduser };
+      const fullPost = {
+        content: this.content,
+        idposts: this.post.idposts,
+        iduser: this.iduser,
+      };
       this.addCom(fullPost)
         .then(() => this.getCom(this.post.idposts))
         .then(() => (this.content = ""))
@@ -273,6 +273,9 @@ export default {
   .picturePost {
     min-width: 100%;
     height: auto;
+  }
+  .rounded-circle {
+    border: solid 2px white;
   }
 }
 .vues {

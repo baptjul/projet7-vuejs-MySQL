@@ -1,9 +1,9 @@
 const fs = require('fs');
 const db = require('../dbconfig');
 
-exports.createPost = (req, res, next) => {
+exports.createPost = (req, res) => {
     const data = req.body
-    const postPicture = '';
+    let postPicture = '';
     if (req.file) {
         postPicture = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
     } else {
@@ -19,7 +19,7 @@ exports.createPost = (req, res, next) => {
     })
 };
 
-exports.getPost = (req, res, next) => {
+exports.getPost = (req, res) => {
     const sql = `SELECT idposts, text_content, image_content, time_post, user_iduser, iduser, username, profile_picture,
     (SELECT COUNT(likes) AS postLikes FROM likes WHERE likes.posts_idposts = idposts) Likes,
     (SELECT COUNT(dislikes) AS postDisLikes FROM likes WHERE likes.posts_idposts = idposts) Dislikes,
@@ -74,7 +74,7 @@ exports.deletePost = (req, res) => {
     });
 }
 
-exports.likeOnPost = (req, res, next) => {
+exports.likeOnPost = (req, res) => {
     const iduser = req.params.iduser
     const idpost = req.params.idpost
     const value = [idpost, iduser]
@@ -87,7 +87,7 @@ exports.likeOnPost = (req, res, next) => {
     })
 };
 
-exports.likeAndDislikePosts = (req, res, next) => {
+exports.likeAndDislikePosts = (req, res) => {
     const postid = req.params.id
     const userid = req.body.iduser;
     const like = req.body.likes

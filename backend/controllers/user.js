@@ -15,7 +15,7 @@ const Token = (user, username, role) => {
   return { token }
 }
 
-exports.signup = (req, res, next) => {
+exports.signup = (req, res) => {
   const data = req.body
   if (!passwordScheme.validate(data.password)) {
     throw { error: "invalid password" }
@@ -38,7 +38,7 @@ exports.signup = (req, res, next) => {
 }
 
 
-exports.login = (req, res, next) => {
+exports.login = (req, res) => {
   let role = '';
   const email = [req.body.email];
   const sql = "SELECT iduser, username, email, password, admin FROM user WHERE email = ?;"
@@ -66,7 +66,7 @@ exports.login = (req, res, next) => {
   })
 };
 
-exports.getUser = (req, res, next) => {
+exports.getUser = (req, res) => {
   const value = [req.params.id]
   const sql = "SELECT * FROM user WHERE iduser = ?;"
   db.query(sql, value, (error, result) => {
@@ -77,7 +77,7 @@ exports.getUser = (req, res, next) => {
   });
 }
 
-exports.updateUser = (req, res, next) => {
+exports.updateUser = (req, res) => {
   const { email, username, firstname, lastname, description, position, birthday } = req.body;
   const id = req.params.id;
   const values = [email, username, firstname, lastname, description, position, birthday, id]
@@ -96,16 +96,33 @@ exports.updateUser = (req, res, next) => {
   });
 }
 
-exports.updateProfilePicture = (req, res, next) => {
+exports.updateProfilePicture = (req, res) => {
   const id = req.params.id;
   const data = `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
   const values = [data, id]
   const sql = "UPDATE user SET profile_picture= ? WHERE iduser = ?;"
-  db.query(sql, values, (error, result) => {
+  const getUser = "SELECT * FROM user WHERE iduser = ?;"
+  db.query(getUser, id, (error, result) => {
     if (error) {
       return res.status(401).json(error);
     }
-    return res.status(200).json("User updated");
+    const filename = result[0].profile_picture.split('/images/user/')[1];
+    fs.unlink(`images/user/${filename}`, (err) => {
+      if (err) {
+        console.log("failed to delete local image:" + err);
+      }
+    })
+    db.query(sql, values, (error, result) => {
+      if (error) {
+        return res.status(401).json(error);
+      }
+      db.query(getUser, id, (error, result) => {
+        if (error) {
+          return res.status(401).json(error);
+        }
+        return res.status(200).json(result);
+      });
+    });
   });
 }
 

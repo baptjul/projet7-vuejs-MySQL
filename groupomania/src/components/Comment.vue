@@ -38,16 +38,6 @@
           >
         </div>
       </div>
-      <!--<div class="d-flex vues">
-        <div class="vues__likes mr-2">
-          <a href="#"><i class="fas fa-heart"></i></a>
-          <span class="mx-2">{{ comment.Likes }}</span>
-        </div>
-        <div class="vues__dislikes mr-2">
-          <a href="#"><i class="fas fa-heart-broken"></i></a>
-          <span class="mx-2">{{ comment.Dislikes }}</span>
-        </div>
-      </div>-->
     </div>
   </div>
 </template>

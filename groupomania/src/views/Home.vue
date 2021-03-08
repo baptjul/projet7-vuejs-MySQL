@@ -121,13 +121,10 @@ export default {
       this.preview = null;
     },
     publishPost() {
-      let post = this.content;
-      let iduser = this.IdUser;
-      let file = this.files;
       let form = new FormData();
-      form.append("post", post);
-      form.append("iduser", iduser);
-      form.append("image", file);
+      form.append("post", this.content);
+      form.append("iduser", this.IdUser);
+      form.append("image", this.files);
       this.addPost(form)
         .then(() => this.getAllPosts())
         .then(

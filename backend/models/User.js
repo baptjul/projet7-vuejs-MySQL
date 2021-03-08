@@ -20,7 +20,6 @@ const UserSchema = joi.object({
         .max(255)
         .allow(null, ''),
     position: joi.string()
-        .regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/)
         .min(3)
         .max(255)
         .allow(null, ''),

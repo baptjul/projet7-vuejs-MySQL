@@ -70,9 +70,7 @@ export default {
         });
     },
     logout({ commit }) {
-      commit('LOGOUT');
-      router.push({ path: "/connexion" });
-      sessionStorage.removeItem('token');
+      commit('LOGOUT').then(() => { router.push({ path: "/connexion" }) }).then(() => sessionStorage.removeItem('token'))
     }
   }
 };

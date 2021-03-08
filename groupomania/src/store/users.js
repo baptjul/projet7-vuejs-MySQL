@@ -40,10 +40,10 @@ export default {
           return Promise.reject(error.response.data);
         });
     },
-    updatePicture(data) {
+    updatePicture({ commit }, data) {
       return axios.put(`/auth/user/${data.iduser}/picture`, data.body, { headers: headerAuth() })
         .then((response) => {
-          //commit('setUser', response.data[0]);
+          commit('setUser', response.data[0]);
           Promise.resolve(response)
         })
         .catch((error) => {

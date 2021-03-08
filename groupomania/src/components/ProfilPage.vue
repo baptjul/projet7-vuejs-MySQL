@@ -3,14 +3,37 @@
     <div class="row">
       <div class="col-md-5">
         <div class="profile-img">
-          <img :src="this.User.profile_picture" alt="profil picture" />
-          <div class="file btn btn-lg btn-primary">
-            Modifier Photo
-            <input type="file" name="file" />
+          <div>
+            <img
+              :src="this.User.profile_picture"
+              alt="profil picture"
+              v-if="!preview"
+            />
+            <img id="preview" v-if="preview" :src="preview" />
+            <div class="col-lg-6 col-sm-6 col-12 mb-4 mt-2 ml-auto mr-auto">
+              <div class="btn-group">
+                <label class="mr-2 mt-2" for="inputFile">
+                  <i class="fas fa-upload"></i>
+                </label>
+                <input
+                  type="file"
+                  ref="myFiles"
+                  id="inputFile"
+                  accept=".jpg, .jpeg, .png, .gif"
+                  @change="handleFileUpload($event)"
+                />
+                <button
+                  class="btn btn-danger btn-file"
+                  v-on:click="submitFile()"
+                >
+                  Envoyer
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-7">
+      <div class="col-md-7 mt-2">
         <div class="profile-head">
           <h2>
             {{ this.User.username }}
@@ -23,7 +46,7 @@
           </h5>
           <h5
             class="mt-1 font-weight-light font-italic"
-            v-show="this.User.description === ''"
+            v-show="!this.User.description"
           >
             {{ defaultDescription }}
           </h5>
@@ -318,6 +341,8 @@ export default {
         birthday: "",
         description: "",
       },
+      preview: "",
+      file: "",
       del: false,
       modify: false,
       defaultDescription:
@@ -329,45 +354,58 @@ export default {
     ...mapGetters({
       User: "Users/User",
       userPosts: "Posts/UserPosts",
-      iduser: "Auth/Iduser",
+      Iduser: "Auth/Iduser",
     }),
   },
   methods: {
     ...mapActions({
       updateUser: "Users/updateUser",
+      updatePicture: "Users/updatePicture",
       getUser: "Users/getUser",
+      getUserPost: "Posts/getUserPost",
       deleteUser: "Users/deleteUser",
       logout: "Auth/logout",
     }),
     splitDate() {
-      let customDate = this.User.birthday.split("T");
-      return customDate;
+      if (this.User.birthday) {
+        let customDate = this.User.birthday.split("T");
+        return customDate;
+      }
+      return [];
     },
     autoResize(event) {
       event.target.style.height = "auto";
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
     postUpdate() {
-      let iduser = this.iduser;
-      let username = this.update.username;
-      let email = this.update.email;
-      let lastname = this.update.lastname;
-      let firstname = this.update.firstname;
-      let position = this.update.position;
-      let birthday = this.update.birthday;
-      let description = this.update.description;
+      const iduser = this.Iduser;
       const body = {
-        email,
-        username,
-        firstname,
-        lastname,
-        description,
-        position,
-        birthday,
+        email: this.update.email,
+        username: this.update.username,
+        firstname: this.update.firstname,
+        lastname: this.update.lastname,
+        description: this.update.description,
+        position: this.update.position,
+        birthday: this.update.birthday,
       };
       this.updateUser({ iduser, body })
         .then(() => (this.modify = false))
         .then(() => this.getUser(iduser))
+        .catch((error) => console.log(error));
+    },
+    handleFileUpload(event) {
+      this.file = this.$refs.myFiles.files[0];
+      const target = event.target.files[0];
+      this.preview = URL.createObjectURL(target);
+    },
+    submitFile() {
+      let form = new FormData();
+      form.append("image", this.file);
+      const data = { iduser: this.Iduser, body: form };
+      this.updatePicture(data)
+        .then(() => (this.file = ""))
+        .then(() => this.getUser(this.Iduser))
+        .then(() => this.getUserPost(this.Iduser))
         .catch((error) => console.log(error));
     },
     delUser() {
@@ -375,14 +413,11 @@ export default {
     },
   },
   mounted() {
-    this.getUser(this.iduser).then(() => {
-      this.update.username = this.User.username;
-      this.update.email = this.User.email;
-      this.update.lastname = this.User.lastname;
-      this.update.firstname = this.User.firstname;
-      this.update.position = this.User.position;
-      this.update.birthday = this.splitDate()[0];
-      this.update.description = this.User.description;
+    this.getUser(this.Iduser).then(() => {
+      this.update = {
+        ...this.User,
+        birthday: this.splitDate()[0],
+      };
     });
   },
 };
@@ -444,12 +479,6 @@ export default {
   font-size: 15px;
   background: #212529b8;
 }
-.profile-img .file input {
-  position: absolute;
-  opacity: 0;
-  right: 0;
-  top: 0;
-}
 .profile-head h5 {
   color: #333;
 }
@@ -483,5 +512,16 @@ export default {
   font-weight: bold;
   color: #2c3e50;
   margin-right: 20px;
+}
+.btn-group {
+  i {
+    font-size: 1.8rem;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  input {
+    display: none;
+  }
 }
 </style>

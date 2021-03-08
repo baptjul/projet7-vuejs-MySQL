@@ -84,7 +84,8 @@ export default {
         })
     },
     addPost({ commit }, data) {
-      return axios.post('/posts/', data, { headers: { 'Content-Type': 'multipart/form-data' } })
+      const user = JSON.parse(sessionStorage.getItem('token'))
+      return axios.post('/posts/', data, { headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${user.token}` } })
         .then((response) => {
           commit('CREATE_POST', response.data);
           return Promise.resolve(response.data);
