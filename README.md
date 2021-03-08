@@ -5,7 +5,7 @@
 
 ### Backend
 
-**Node.js** / **Express.js** / **MySQL** (service de base de données)
+**Node.js** / **Express.js** / **MySQL**
 
 __installation__
 
@@ -15,7 +15,7 @@ __installation__
 
 -   renommer le fichier `env_.txt` en `.env` et de remplacer les valeurs des variables qu'il contient   
 
-__lancement du serveur__
+__lancement__
 
 -   Exécutez `nodemon server` pour lancer le serveur
 
@@ -23,7 +23,7 @@ __lancement du serveur__
 
 ### Frontend
 
-*Vue.js**
+**Vue.js**
 
 __installation__
 
@@ -31,6 +31,6 @@ __installation__
 
 -   Exécutez `npm install`
 
-__lancement du serveur__
+__lancement__
 
 -   Exécutez `npm run serve` pour lancer le serveur de développement ou `npm run build` pour la production.
