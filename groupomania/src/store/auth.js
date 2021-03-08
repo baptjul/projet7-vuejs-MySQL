@@ -60,8 +60,10 @@ export default {
       return axios.post('/auth/signup', credentials)
         .then((res) => {
           sessionStorage.setItem('token', JSON.stringify(res.data));
-          let tokenId = jwt_decode(sessionStorage.getItem('token')).iduser
-          commit('SET_TOKEN', res.data.token, tokenId);
+          let user = jwt_decode(sessionStorage.getItem('token')).iduser
+          let token = res.data.token
+          let userInfo = { token, user }
+          commit('SET_TOKEN', userInfo);
           return Promise.resolve(res.data);
         })
         .catch((error) => {
@@ -70,7 +72,9 @@ export default {
         });
     },
     logout({ commit }) {
-      commit('LOGOUT').then(() => { router.push({ path: "/connexion" }) }).then(() => sessionStorage.removeItem('token'))
+      commit('LOGOUT')
+      router.push({ path: "/connexion" })
+      sessionStorage.removeItem('token')
     }
   }
 };

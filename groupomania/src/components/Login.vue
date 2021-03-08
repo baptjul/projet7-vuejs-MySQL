@@ -177,7 +177,7 @@ export default {
           })
           .catch((error) => {
             if (error.code === "ER_DUP_ENTRY") {
-              this.sign.errors = "Ce pseudo existe déjà";
+              this.sign.errors = "Ce pseudo ou email existe déjà";
             } else {
               this.sign.errors = error;
             }

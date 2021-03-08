@@ -46,13 +46,8 @@ export default {
   computed: {
     ...mapGetters({
       User: "Users/User",
+      IdUser: "Auth/Iduser",
     }),
-    isDescription() {
-      if (this.User.description !== null || "") {
-        return this.User.description;
-      }
-      return "Ajoutez une description et retrouver la ici";
-    },
   },
 };
 </script>

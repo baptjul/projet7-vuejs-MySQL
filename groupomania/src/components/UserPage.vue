@@ -194,7 +194,9 @@ export default {
       return false;
     },
     delUser() {
-      this.deleteUser(this.User.iduser).catch((error) => console.log(error));
+      this.deleteUser(this.User.iduser)
+        .then(() => this.$router.push({ path: "/" }))
+        .catch((error) => console.log(error));
     },
     splitDate() {
       let customDate = this.User.birthday.split("T");

@@ -1,6 +1,5 @@
 import axios from '@/instanceHttp';
 import headerAuth from '@/services/headerAuth';
-import router from '@/router/index';
 
 export default {
   stateFactory: true,
@@ -54,7 +53,6 @@ export default {
       return axios.delete(`/auth/${iduser}`, { headers: headerAuth() })
         .then((response) => {
           commit('REMOVE_USER')
-          router.push({ path: "/" });
           Promise.resolve(response)
         })
         .catch((error) => {

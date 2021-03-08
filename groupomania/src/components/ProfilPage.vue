@@ -307,7 +307,7 @@
                     type="submit"
                     class="profile-edit-btn ml-1"
                     v-if="del"
-                    v-on:click="delUser(this.User.iduser)"
+                    v-on:click="delUser()"
                   >
                     supprimer
                   </button>
@@ -409,7 +409,9 @@ export default {
         .catch((error) => console.log(error));
     },
     delUser() {
-      this.deleteUser(this.User.iduser).catch((error) => console.log(error));
+      this.deleteUser(this.User.iduser)
+        .then(() => this.logout())
+        .catch((error) => console.log(error));
     },
   },
   mounted() {
