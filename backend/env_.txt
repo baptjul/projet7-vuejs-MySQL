@@ -1,0 +1,7 @@
+DBHOST = database_host
+DBUSER = database_name
+BDPASSWORD = database_password
+DATABASE = database_name
+
+SESSIONKEY = security_key_session
+TOKEN = security_key_token
