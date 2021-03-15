@@ -225,7 +225,7 @@ export default {
       width: 50%;
     }
     .nav-link.active {
-      background-color: #fd2d01; //linear-gradient(to bottom right, #be2635, #2c3e50)
+      background-color: #cb2301; //fd2d01; //linear-gradient(to bottom right, #be2635, #2c3e50)
       color: white;
     }
   }
@@ -268,13 +268,13 @@ export default {
 .box input[type="text"]:focus,
 .box input[type="password"]:focus {
   width: 300px;
-  border-color: #fd2d01;
+  border-color: #cb2301; //fd2d01;
 }
 
 .box input[type="submit"] {
   font-weight: bold;
   border: 0;
-  background: #fd2d01;
+  background: #cb2301; //fd2d01;
   margin: 20px auto;
   text-align: center;
   border: 2px solid #2c3e50;
@@ -287,12 +287,12 @@ export default {
 }
 
 .box input[type="submit"]:hover {
-  background: #c92100;
+  background: #cb2301; //c92100;
   color: white;
 }
 
 .error {
   font-size: 1.2rem;
-  color: red;
+  color: #cb2301; //red;
 }
 </style>

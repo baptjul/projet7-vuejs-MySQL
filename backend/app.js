@@ -23,7 +23,6 @@ app.use(bodyParser.json());
 // Sécurité contre les injections
 app.use(helmet());
 
-// gestion de la session utilisateur
 app.use(session({
   secret: process.env.SESSIONKEY,
   name: 'sessionId',

@@ -11,12 +11,12 @@
         :to="`/profile/${comment.user_iduser}`"
         v-if="comment.user_iduser !== this.iduser"
       >
-        <h5 class="mr-2 pr-2 mt-2 text-danger align-self-center">
+        <h5 class="mr-2 pr-2 mt-2 align-self-center">
           {{ comment.username }}
         </h5></router-link
       >
       <router-link to="/profile" v-if="comment.user_iduser === this.iduser"
-        ><h5 class="mr-2 pr-2 mt-2 text-danger align-self-center">
+        ><h5 class="mr-2 pr-2 mt-2 align-self-center">
           {{ comment.username }}
         </h5></router-link
       >
@@ -100,12 +100,15 @@ export default {
   a {
     text-decoration: none;
   }
+  h5 {
+    color: #aa222f;
+  }
 }
 .vues {
   font-size: 1.5rem;
   i {
     text-decoration: none;
-    color: #be2635c7;
+    color: #aa222f; //be2635c7;
   }
   a {
     :hover {

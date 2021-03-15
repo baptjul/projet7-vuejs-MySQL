@@ -202,7 +202,9 @@ export default {
       event.target.style.height = `${event.target.scrollHeight}px`;
     },
     delPost() {
-      this.deletePost(this.post.idposts);
+      this.deletePost(this.post.idposts).then(() =>
+        this.getUserPost(this.iduser)
+      );
     },
     createCom() {
       const fullPost = {
@@ -277,6 +279,9 @@ export default {
   .rounded-circle {
     border: solid 2px white;
   }
+  .profil_link {
+    color: white;
+  }
 }
 .vues {
   font-size: 1.3rem;
@@ -290,12 +295,12 @@ export default {
     text-decoration: none;
     color: grey; //#be2635c7
     &:hover {
-      color: #be2635c7;
+      color: #aa222f; //be2635c7;
     }
   }
   .active {
     text-decoration: none;
-    color: #be2635c7;
+    color: #aa222f; //be2635c7;
   }
 }
 .comment-title p {

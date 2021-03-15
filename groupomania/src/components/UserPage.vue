@@ -223,7 +223,7 @@ export default {
     color: #2c3e50;
   }
   .nav-link.active {
-    background-color: #fd2d01; //linear-gradient(to bottom right, #be2635, #2c3e50)
+    background-color: #aa222f; //linear-gradient(to bottom right, #be2635, #2c3e50)
     color: white;
     border: none;
     border-bottom: 2px solid white;

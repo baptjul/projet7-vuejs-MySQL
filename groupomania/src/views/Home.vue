@@ -56,7 +56,7 @@
 
                 <button
                   type="submit"
-                  class="btn btn--light ml-auto"
+                  class="btn btn--light post-btn ml-auto"
                   v-on:click.prevent="publishPost()"
                   v-if="files || content !== ''"
                 >
@@ -160,9 +160,13 @@ export default {
 .feed {
   button {
     background-color: white;
-    .btn--light {
-      color: black;
-    }
+  }
+  .post-btn {
+    background-color: white;
+    border: 2px solid black;
+  }
+  label {
+    color: #2c3e50;
   }
   p {
     color: #2c3e50;

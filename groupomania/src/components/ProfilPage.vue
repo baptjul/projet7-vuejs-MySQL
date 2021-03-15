@@ -443,7 +443,7 @@ export default {
     color: #2c3e50;
   }
   .nav-link.active {
-    background-color: #fd2d01; //linear-gradient(to bottom right, #be2635, #2c3e50)
+    background-color: #aa222f; //linear-gradient(to bottom right, #be2635, #2c3e50)
     color: white;
     border: none;
     border-bottom: 2px solid white;
@@ -460,7 +460,7 @@ export default {
     border-radius: 24px;
     transition: 0.25s;
     &:focus {
-      border-color: #fd2d01;
+      border-color: #aa222f;
     }
   }
 }
@@ -490,6 +490,7 @@ export default {
 .profile-edit-btn {
   border: none;
   border-radius: 1.5rem;
+  border: 2px solid #2c3e50;
   width: 100%;
   padding: 8px;
   font-weight: 600;

@@ -55,18 +55,12 @@ body {
 
 .card {
   border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.377);
+  background-color: rgba(255, 255, 255, 0.777);
   .card-header {
     border-radius: 8px;
   }
   h2 {
     font-size: 1.5rem;
-  }
-  a {
-    .profil_link {
-      text-decoration: underline;
-      color: white;
-    }
   }
   textarea {
     resize: none;
@@ -75,7 +69,7 @@ body {
 
 .jumbotron {
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.377);
+  background-color: rgba(255, 255, 255, 0.777);
   .card {
     background-color: rgb(255, 255, 255);
   }
@@ -86,17 +80,13 @@ body {
 }
 
 .secondary {
-  background-image: linear-gradient(
-    to bottom right,
-    #2c3e50,
-    #fd2d01
-  ); //2c3e50e0
+  background-image: linear-gradient(to bottom right, #202d3a, #cb2301); //fd2d01
 }
 
 .btn-danger {
-  background-color: #fd2d01;
+  background-color: #aa222f; //fd2d01;
   &:hover {
-    background-color: #c92100; //#be2635c7
+    background-color: #aa222f; //c92100; //#be2635c7
   }
 }
 </style>

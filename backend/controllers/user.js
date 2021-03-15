@@ -107,11 +107,13 @@ exports.updateProfilePicture = (req, res) => {
       return res.status(401).json(error);
     }
     const filename = result[0].profile_picture.split('/images/user/')[1];
-    fs.unlink(`images/user/${filename}`, (err) => {
-      if (err) {
-        console.log("failed to delete local image:" + err);
-      }
-    })
+    if (filename !== 'icon.png') {
+      fs.unlink(`images/user/${filename}`, (err) => {
+        if (err) {
+          console.log("failed to delete local image:" + err);
+        }
+      })
+    }
     db.query(sql, values, (error, result) => {
       if (error) {
         return res.status(401).json(error);

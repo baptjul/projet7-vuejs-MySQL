@@ -62,10 +62,10 @@ export default {
     font-weight: bold;
     text-decoration: none;
     &.router-link-exact-active {
-      color: #fd2d01;
+      color: #cb2301; //fd2d01;
     }
     &:hover {
-      color: #fd2d01;
+      color: #cb2301; //fd2d01;
     }
   }
   i {
@@ -101,11 +101,11 @@ export default {
 
 .disconnect {
   border-radius: 20px;
-  background-color: #fd2d01;
+  background-color: #aa222f; //fd2d01;
   color: #fff;
   font-size: 0.8rem;
   font-weight: bold;
-  border: 1px solid #fd2d01;
+  border: 1px solid #aa222f; //fd2d01;
   padding: 8px 20px;
   margin-left: 10px;
   letter-spacing: 1px;
@@ -116,7 +116,7 @@ export default {
     transform: scale(0.9);
   }
   &:hover {
-    background-color: #c92100;
+    background-color: #aa222f; //c92100;
   }
 }
 </style>

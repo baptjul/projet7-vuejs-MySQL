@@ -3,7 +3,7 @@ import jwt_decode from "jwt-decode";
 import router from '@/router/index';
 
 function logged() {
-  const sessionInfo = sessionStorage.getItem('token')
+  const sessionInfo = localStorage.getItem('token')
   if (sessionInfo) {
     const tokenInfo = jwt_decode(sessionInfo)
     if (tokenInfo.iduser && tokenInfo.role) {
@@ -44,8 +44,8 @@ export default {
     login({ commit }, credentials) {
       return axios.post('/auth/login', credentials)
         .then((res) => {
-          sessionStorage.setItem('token', JSON.stringify(res.data));
-          let user = jwt_decode(sessionStorage.getItem('token')).iduser
+          localStorage.setItem('token', JSON.stringify(res.data));
+          let user = jwt_decode(localStorage.getItem('token')).iduser
           let token = res.data.token
           let userInfo = { token, user }
           commit('SET_TOKEN', userInfo);
@@ -59,8 +59,8 @@ export default {
     signup({ commit }, credentials) {
       return axios.post('/auth/signup', credentials)
         .then((res) => {
-          sessionStorage.setItem('token', JSON.stringify(res.data));
-          let user = jwt_decode(sessionStorage.getItem('token')).iduser
+          localStorage.setItem('token', JSON.stringify(res.data));
+          let user = jwt_decode(localStorage.getItem('token')).iduser
           let token = res.data.token
           let userInfo = { token, user }
           commit('SET_TOKEN', userInfo);
@@ -74,7 +74,7 @@ export default {
     logout({ commit }) {
       commit('LOGOUT')
       router.push({ path: "/connexion" })
-      sessionStorage.removeItem('token')
+      localStorage.removeItem('token')
     }
   }
 };

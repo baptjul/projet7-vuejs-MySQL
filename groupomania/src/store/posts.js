@@ -84,7 +84,7 @@ export default {
         })
     },
     addPost({ commit }, data) {
-      const user = JSON.parse(sessionStorage.getItem('token'))
+      const user = JSON.parse(localStorage.getItem('token'))
       return axios.post('/posts/', data, { headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${user.token}` } })
         .then((response) => {
           commit('CREATE_POST', response.data);

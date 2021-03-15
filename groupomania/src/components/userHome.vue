@@ -55,7 +55,14 @@ export default {
 <style lang="scss">
 .userHomme {
   p {
-    color: white;
+    color: #202d3a;
+  }
+  h3 {
+    color: #202d3a;
+  }
+  .profil_link {
+    text-decoration: underline;
+    color: #202d3a;
   }
 }
 </style>
