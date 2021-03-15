@@ -3,9 +3,20 @@
 ## Installation de l'application Groupomania
 
 
+### DataBase
+
+**MySQL**
+
+__installation__
+
+- Connectez vous à MySQL
+
+- Exécutez `mysql -u "username" -p groupomania < Dump20210308.sql`
+
+
 ### Backend
 
-**Node.js** / **Express.js** / **MySQL**
+**Node.js** / **Express.js**
 
 __installation__
 
@@ -27,7 +38,7 @@ __lancement__
 
 __installation__
 
--    Dans une invite de commande, aller dans le repertoire `frontend`
+-    Dans une invite de commande, aller dans le repertoire `groupomania`
 
 -   Exécutez `npm install`
 
