@@ -9,6 +9,8 @@
 
 __installation__
 
+- Dans une invite de commande, aller dans le répertoire du projet `cd projet7`
+
 - Connectez vous à MySQL
 
 - Exécutez `mysql -u "username" -p groupomania < Dump20210308.sql`
